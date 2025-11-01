@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">YourLogo</div>
+    <nav>
+      <ul>
+        <li><a href="#">Make a Request</a></li>
+        <li><a href="#">Account Settings</a></li>
+        <li><a href="#">Simple Stats</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+<div class="top-bar">
+  <div class="profile-section">
+    <img src="profile.jpg" alt="User Profile" class="profile-pic">
+    <div class="greeting-text"> <!-- 🟢 Added wrapper for better alignment -->
+      <h1>Welcome back, <span id="user-name">First Last</span></h1>
+      <p class="greeting-subtext">Here’s what’s happening today at a glance</p>
+    </div>
+  </div>
+</div>
+
+
+  <main class="main-content">
+    <!-- Future content goes here -->
+     <h2>Dashboard Overview</h2>
+  <p>Start by selecting an option on the left or check your latest updates here.</p>
+  </main>
+  <footer class="footer">© 2025 HORARIUM. All rights reserved.</footer>
+
+  <script>
+    const userName = 'Jeanne Foster'; // Placeholder user
+    document.getElementById('user-name').textContent = userName;
+  </script>
+</body>
+</html>
