@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Realtime Interactive Calendar</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --radius:14px; --gap:14px; --text:#e6eef6;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071025);color:var(--text)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px}
+
+    .calendar-card{
+      width:100%;max-width:980px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius); padding:20px; box-shadow:0 8px 30px rgba(2,6,23,0.6);display:grid;grid-template-columns:320px 1fr;gap:var(--gap);
+    }
+
+    /* left column */
+    .sidebar{background:var(--card);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px}
+    .now{display:flex;flex-direction:column;gap:4px}
+    .clock{font-size:28px;font-weight:700}
+    .date-line{color:var(--muted);font-size:13px}
+
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    button:hover{transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#7c3aed);border:none;color:#022;}
+
+    .legend{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px;margin-top:6px}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .event-dot{background:var(--accent)}
+
+    /* main calendar */
+    .main{background:transparent;padding:6px}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .month-title{font-size:20px;font-weight:700}
+    .nav{display:flex;gap:8px}
+    /* Make the month/year dropdown transparent with white text */
+#viewSelect {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  appearance: none;
+}
+
+#viewSelect option {
+  background: rgba(15, 23, 36, 0.8);
+  color: white;
+}
+
+#viewSelect:hover {
+  border-color: rgba(255,255,255,0.6);
+}
+
+
+    .grid{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px}
+    .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px}
+    .weekday{font-size:12px;color:var(--muted);text-align:center}
+    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .day{min-height:96px;padding:8px;border-radius:10px;background:transparent;position:relative;overflow:hidden}
+    .day.inactive{opacity:0.35}
+    .day .num{position:absolute;top:8px;left:8px;font-weight:600}
+    .day.today{outline:2px solid rgba(6,182,212,0.18);box-shadow:inset 0 0 0 1px rgba(6,182,212,0.06)}
+    .events{position:absolute;left:8px;right:8px;bottom:8px;display:flex;flex-direction:column;gap:4px}
+    .event{padding:4px 6px;border-radius:8px;font-size:12px;background:linear-gradient(90deg,var(--accent),#7c3aed);color:#021;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    .hint{color:var(--muted);font-size:13px;margin-top:6px}
+
+    /* small screens */
+    @media (max-width:880px){
+      .calendar-card{grid-template-columns:1fr;}
+      .sidebar{order:2;flex-direction:row;align-items:center}
+      .now{flex:1}
+      .header{flex-direction:column;align-items:flex-start;gap:8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="calendar-card">
+      <div class="sidebar">
+        <div class="now">
+          <div class="clock" id="clock">--:--:--</div>
+          <div class="date-line" id="dateline">Loading date...</div>
+        </div>
+
+        <div class="controls">
+          <button id="prev">◀ Prev</button>
+          <button id="today" class="btn-primary">Today</button>
+          <button id="next">Next ▶</button>
+        </div>
+
+        <div class="legend"><span class="dot event-dot"></span><span>Events</span></div>
+        <div class="hint">Click a day to add a quick note (stored locally). Click event to delete.</div>
+      </div>
+
+      <div class="main">
+        <div class="header">
+          <div class="month-title" id="monthTitle">Month Year</div>
+          <div class="nav">
+            <select id="viewSelect" title="Jump to month"></select>
+          </div>
+        </div>
+
+        <div class="grid" id="calendarGrid">
+          <div class="weekdays" id="weekdays"></div>
+          <div class="days" id="days"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Utilities
+      const $ = id => document.getElementById(id);
+      const pad = n => n.toString().padStart(2,'0');
+
+      // State
+      let current = new Date(); // points to current displayed month (1st of month)
+      current.setDate(1);
+
+      // Local storage key for events
+      const LS_KEY = 'realtime_calendar_events_v1';
+      function loadEvents(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'{}') }catch(e){return {}} }
+      function saveEvents(ev){ localStorage.setItem(LS_KEY, JSON.stringify(ev)) }
+      let events = loadEvents(); // { 'YYYY-MM-DD': ['note1','note2'] }
+
+      // DOM refs
+      const monthTitle = $('monthTitle');
+      const weekdaysEl = $('weekdays');
+      const daysEl = $('days');
+      const clockEl = $('clock');
+      const dateLine = $('dateline');
+      const prevBtn = $('prev'); const nextBtn = $('next'); const todayBtn = $('today'); const viewSelect = $('viewSelect');
+
+      // Render weekdays (Sun..Sat based on locale if you want; here explicit)
+      const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      function renderWeekdays(){ weekdaysEl.innerHTML = WEEKDAYS.map(d=>`<div class="weekday">${d}</div>`).join('') }
+
+      // Render month dropdown (±6 years)
+      function populateMonthSelect(){
+        const now = new Date();
+        const startYear = now.getFullYear()-6; const endYear = now.getFullYear()+6;
+        const opts = [];
+        for(let y=startYear;y<=endYear;y++){
+          for(let m=0;m<12;m++){
+            const d = new Date(y,m,1);
+            opts.push({v:`${y}-${pad(m+1)}-01`, label: d.toLocaleString(undefined,{month:'long',year:'numeric'})});
+          }
+        }
+        viewSelect.innerHTML = opts.map(o=>`<option value="${o.v}">${o.label}</option>`).join('')
+      }
+
+      // Main render
+      function render(){
+        const year = current.getFullYear();
+        const month = current.getMonth();
+        monthTitle.textContent = current.toLocaleString(undefined,{month:'long', year:'numeric'});
+
+        // update select
+        const selVal = `${year}-${pad(month+1)}-01`;
+        viewSelect.value = selVal;
+
+        // days grid
+        daysEl.innerHTML = '';
+
+        const firstDayIndex = new Date(year,month,1).getDay(); // 0..6 (Sun..Sat)
+        const daysInMonth = new Date(year,month+1,0).getDate();
+        const prevMonthDays = new Date(year,month,0).getDate();
+
+        // create array of 42 slots (6 weeks) for consistent layout
+        const totalSlots = 42;
+        for(let i=0;i<totalSlots;i++){
+          const cell = document.createElement('div');
+          cell.className = 'day';
+
+          // calculate date number and month relation
+          const slotIndex = i;
+          let dateNum, cellDate, inactive=false;
+
+          const dayOffset = slotIndex - firstDayIndex;
+          if(dayOffset < 0){
+            // previous month
+            dateNum = prevMonthDays + dayOffset + 1;
+            const d = new Date(year, month-1, dateNum);
+            cellDate = d;
+            inactive = true;
+          } else if(dayOffset >= daysInMonth){
+            // next month
+            dateNum = dayOffset - daysInMonth + 1;
+            const d = new Date(year, month+1, dateNum);
+            cellDate = d;
+            inactive = true;
+          } else {
+            dateNum = dayOffset + 1;
+            const d = new Date(year, month, dateNum);
+            cellDate = d;
+          }
+
+          const iso = cellDate.toISOString().slice(0,10);
+          cell.innerHTML = `<div class="num">${dateNum}</div><div class="events" data-date="${iso}"></div>`;
+          if(inactive) cell.classList.add('inactive');
+
+          // highlight today
+          const today = new Date();
+          if(cellDate.getFullYear() === today.getFullYear() && cellDate.getMonth()===today.getMonth() && cellDate.getDate()===today.getDate()){
+            cell.classList.add('today');
+          }
+
+          // attach click handler to add event
+          cell.addEventListener('click', (ev)=>{
+            ev.stopPropagation();
+            const dateKey = iso;
+            const note = prompt('Add a quick note for ' + dateKey + ' (leave empty to cancel)');
+            if(note && note.trim()){
+              events[dateKey] = events[dateKey] || [];
+              events[dateKey].push(note.trim());
+              saveEvents(events);
+              render();
+            }
+          });
+
+          daysEl.appendChild(cell);
+        }
+
+        // populate events into day boxes
+        const eventEls = daysEl.querySelectorAll('.events');
+        eventEls.forEach(e =>{
+          const dateKey = e.dataset.date;
+          const list = events[dateKey] || [];
+          e.innerHTML = '';
+          list.slice(0,3).forEach((note, idx)=>{
+            const evEl = document.createElement('div');
+            evEl.className = 'event';
+            evEl.textContent = note;
+            evEl.title = note + '\n(click to delete)';
+            evEl.addEventListener('click',(ev)=>{
+              ev.stopPropagation();
+              if(confirm('Delete this event?')){
+                events[dateKey].splice(idx,1);
+                if(events[dateKey].length===0) delete events[dateKey];
+                saveEvents(events);
+                render();
+              }
+            });
+            e.appendChild(evEl);
+          });
+          // small dot if more
+          if(list.length>3){
+            const more = document.createElement('div'); more.className='event'; more.textContent = `+${list.length-3} more`;
+            more.title = list.slice(3).join('\n');
+            more.addEventListener('click',(ev)=>{ ev.stopPropagation(); alert(list.join('\n')) });
+            e.appendChild(more);
+          }
+        });
+      }
+
+      // Clock and dateline live update
+      function tick(){
+        const now = new Date();
+        clockEl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        dateLine.textContent = now.toLocaleString(undefined,{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+      }
+
+      // Buttons
+      prevBtn.addEventListener('click', ()=>{ current.setMonth(current.getMonth()-1); render(); });
+      nextBtn.addEventListener('click', ()=>{ current.setMonth(current.getMonth()+1); render(); });
+      todayBtn.addEventListener('click', ()=>{ const n=new Date(); current.setFullYear(n.getFullYear(), n.getMonth(), 1); render(); });
+
+      viewSelect.addEventListener('change', (e)=>{
+        const v = e.target.value; // yyyy-mm-01
+        const [y,m] = v.split('-');
+        current.setFullYear(parseInt(y), parseInt(m)-1, 1);
+        render();
+      });
+
+      // Initialization
+      renderWeekdays(); populateMonthSelect(); render(); tick();
+      setInterval(tick, 1000);
+
+      // Expose small API in console for power users
+      window.RealtimeCalendar = {
+        goTo: (y,m)=>{ current.setFullYear(y,m-1,1); render(); },
+        exportEvents: ()=>JSON.stringify(events),
+        importEvents: (json)=>{ try{ events = JSON.parse(json); saveEvents(events); render(); return true }catch(e){return false} }
+      };
+
+    })();
+  </script>
+</body>
+</html>
