@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Absence Requests</title>
+  <link rel="stylesheet" href="calendar.css" />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --radius:14px; --gap:14px; --text:#e6eef6;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg), #071025);
+      color: var(--text);
+      font-family: var(--font-family);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin-top: 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 26px;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .request-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      cursor: default;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s forwards;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .request-card:nth-child(1){animation-delay:0.1s;}
+    .request-card:nth-child(2){animation-delay:0.2s;}
+    .request-card:nth-child(3){animation-delay:0.3s;}
+
+    .request-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .request-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .employee-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+
+    .employee-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .employee-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .shift-details {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+      padding: 0;
+    }
+
+    .btn-accept {
+      background: var(--accent);
+    }
+
+    .btn-decline {
+      background: #ef4444;
+    }
+
+    .btn-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .btn-icon:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .no-requests {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>View Absence Requests</h2>
+
+    <div class="request-card">
+      <div class="request-info">
+        <div class="employee-avatar">JD</div>
+        <div>
+          <div class="employee-name">John Doe</div>
+          <div class="shift-details">
+            Reason: <strong>Holiday</strong><br />
+            Start Date: <strong>Nov 6</strong><br />
+            End Date: <strong>Nov 10</strong>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-icon btn-accept" title="Accept">
+          <svg viewBox="0 0 24 24"><path d="M20.285 6.709a1 1 0 0 0-1.414-1.418l-9.193 9.23-4.193-4.19a1 1 0 0 0-1.414 1.414l4.9 4.903a1 1 0 0 0 1.414 0l9.91-9.94z"/></svg>
+        </button>
+        <button class="btn-icon btn-decline" title="Decline">
+          <svg viewBox="0 0 24 24"><path d="M18.364 5.636a1 1 0 0 0-1.414 0L12 10.586 7.05 5.636a1 1 0 1 0-1.414 1.414L10.586 12l-4.95 4.95a1 1 0 1 0 1.414 1.414L12 13.414l4.95 4.95a1 1 0 0 0 1.414-1.414L13.414 12l4.95-4.95a1 1 0 0 0 0-1.414z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="request-card">
+      <div class="request-info">
+        <div class="employee-avatar">MA</div>
+        <div>
+          <div class="employee-name">Maria Anders</div>
+          <div class="shift-details">
+            Reason: <strong>Sickness</strong><br />
+            Start Date: <strong>Nov 12</strong><br />
+            End Date: <strong>Nov 14</strong>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-icon btn-accept" title="Accept">
+          <svg viewBox="0 0 24 24"><path d="M20.285 6.709a1 1 0 0 0-1.414-1.418l-9.193 9.23-4.193-4.19a1 1 0 0 0-1.414 1.414l4.9 4.903a1 1 0 0 0 1.414 0l9.91-9.94z"/></svg>
+        </button>
+        <button class="btn-icon btn-decline" title="Decline">
+          <svg viewBox="0 0 24 24"><path d="M18.364 5.636a1 1 0 0 0-1.414 0L12 10.586 7.05 5.636a1 1 0 1 0-1.414 1.414L10.586 12l-4.95 4.95a1 1 0 1 0 1.414 1.414L12 13.414l4.95 4.95a1 1 0 0 0 1.414-1.414L13.414 12l4.95-4.95a1 1 0 0 0 0-1.414z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="request-card">
+      <div class="request-info">
+        <div class="employee-avatar">AJ</div>
+        <div>
+          <div class="employee-name">Alex Johnson</div>
+          <div class="shift-details">
+            Reason: <strong>Maternity Leave</strong><br />
+            Start Date: <strong>Nov 8</strong><br />
+            End Date: <strong>Dec 8</strong>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-icon btn-accept" title="Accept">
+          <svg viewBox="0 0 24 24"><path d="M20.285 6.709a1 1 0 0 0-1.414-1.418l-9.193 9.23-4.193-4.19a1 1 0 0 0-1.414 1.414l4.9 4.903a1 1 0 0 0 1.414 0l9.91-9.94z"/></svg>
+        </button>
+        <button class="btn-icon btn-decline" title="Decline">
+          <svg viewBox="0 0 24 24"><path d="M18.364 5.636a1 1 0 0 0-1.414 0L12 10.586 7.05 5.636a1 1 0 1 0-1.414 1.414L10.586 12l-4.95 4.95a1 1 0 1 0 1.414 1.414L12 13.414l4.95 4.95a1 1 0 0 0 1.414-1.414L13.414 12l4.95-4.95a1 1 0 0 0 0-1.414z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="noRequests" class="no-requests" style="display: none;">
+      No pending absence requests.
+    </div>
+  </div>
+
+  <script>
+    const requests = document.querySelectorAll('.request-card');
+
+    requests.forEach(card => {
+      const acceptBtn = card.querySelector('.btn-accept');
+      const declineBtn = card.querySelector('.btn-decline');
+
+      acceptBtn.addEventListener('click', () => {
+        card.style.opacity = '0.6';
+        card.style.pointerEvents = 'none';
+        alert(`Absence request from ${card.querySelector('.employee-name').textContent} has been accepted.`);
+      });
+
+      declineBtn.addEventListener('click', () => {
+        card.style.opacity = '0.6';
+        card.style.pointerEvents = 'none';
+        alert(`Absence request from ${card.querySelector('.employee-name').textContent} has been declined.`);
+      });
+    });
+
+    function checkForNoRequests() {
+      const remaining = document.querySelectorAll('.request-card:not([style*="opacity: 0.6"])');
+      if (remaining.length === 0) {
+        document.getElementById('noRequests').style.display = 'block';
+      }
+    }
+
+    document.addEventListener('click', checkForNoRequests);
+  </script>
+</body>
+</html>
