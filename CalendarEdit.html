@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manager Calendar</title>
+  <link rel="stylesheet" href="calendar.css" />
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg), #071025);
+      color: var(--text);
+      overflow-y: auto;
+      padding: 40px 0;
+    }
+
+    .form-side h2 {
+      text-align: center;
+      width: 100%;
+    }
+
+    .logo {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 128px;
+  height: 128px;
+  object-fit: contain;}
+
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 40px;
+      width: 90%;
+      max-width: 1400px;
+      margin-top: 40px;
+    }
+
+    .calendar-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin-top: 110px; /* pushes the calendar lower to align with remove employees */
+    }
+
+    .form-side {
+      flex: 1;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--accent);
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    select,
+    .custom-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), #7c3aed);
+      border: none;
+      color: #021;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .submit-section {
+      text-align: left;
+      margin-top: 20px;
+      align-self: flex-start;
+    }
+
+    .custom-select {
+      position: relative;
+      user-select: none;
+    }
+
+    .custom-select .select-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .custom-select .select-display::after {
+      content: "▼";
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .custom-select .options {
+      display: none;
+      position: absolute;
+      top: 45px;
+      left: 0;
+      width: 100%;
+      background: var(--card);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 100;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .custom-select.open .options {
+      display: block;
+    }
+
+    .custom-select .options label {
+      display: block;
+      padding: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .custom-select .options input {
+      margin-right: 8px;
+    }
+
+    .placeholder {
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.png" alt="Company Logo" class="logo">
+
+  <div class="container">
+    <!-- Left: Calendar -->
+    <div class="calendar-side">
+      <div
+        class="calendar-card"
+        style="width: 100%; max-width: 800px; min-height: 420px"
+      >
+        <div class="main">
+          <div class="header">
+            <div class="month-title" id="monthTitle">Month Year</div>
+            <div class="nav"><select id="viewSelect"></select></div>
+          </div>
+
+          <div class="grid" id="calendarGrid">
+            <div class="weekdays" id="weekdays"></div>
+            <div class="days" id="days"></div>
+          </div>
+        </div>
+      </div>
+      <div class="submit-section">
+        <button id="submitCalendar">Submit Edited Calendar</button>
+      </div>
+    </div>
+
+    <!-- Right: Manager Controls -->
+    <div class="form-side">
+      <h2>Edit Work Schedule</h2>
+
+      <!-- Day + Time selection -->
+      <label for="daySelect">Select Day of Week:</label>
+      <select id="daySelect">
+        <option value="">-- Select Day --</option>
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+        <option>Friday</option>
+        <option>Saturday</option>
+        <option>Sunday</option>
+      </select>
+
+      <label for="timeSelect">Select Time Period:</label>
+      <select id="timeSelect">
+        <option value="">-- Select Time --</option>
+        <option>08:00 - 12:00</option>
+        <option>12:00 - 16:00</option>
+        <option>16:00 - 20:00</option>
+        <option>20:00 - 00:00</option>
+      </select>
+
+      <!-- Add Employees Section -->
+      <label>Select Employees to Add:</label>
+      <div class="custom-select" id="employeeAddDropdown">
+        <div class="select-display placeholder">-- Select Employees --</div>
+        <div class="options">
+          <label><input type="checkbox" value="John Doe" /> John Doe</label>
+          <label><input type="checkbox" value="Maria Anders" /> Maria Anders</label>
+          <label><input type="checkbox" value="Robert Fox" /> Robert Fox</label>
+          <label><input type="checkbox" value="Jane Smith" /> Jane Smith</label>
+          <label><input type="checkbox" value="Alex Johnson" /> Alex Johnson</label>
+        </div>
+      </div>
+
+      <button id="addEmployeesBtn">Add Employees</button>
+
+      <!-- Remove Employees Section -->
+      <label>Select Employees to Remove:</label>
+      <div class="custom-select" id="employeeRemoveDropdown">
+        <div class="select-display placeholder">-- Select Employees --</div>
+        <div class="options">
+          <label><input type="checkbox" value="John Doe" /> John Doe</label>
+          <label><input type="checkbox" value="Maria Anders" /> Maria Anders</label>
+          <label><input type="checkbox" value="Robert Fox" /> Robert Fox</label>
+          <label><input type="checkbox" value="Jane Smith" /> Jane Smith</label>
+          <label><input type="checkbox" value="Alex Johnson" /> Alex Johnson</label>
+        </div>
+      </div>
+
+      <button id="removeEmployeesBtn">Remove Employees</button>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const pad = (n) => n.toString().padStart(2, "0");
+    let current = new Date();
+    current.setDate(1);
+
+    const monthTitle = $("monthTitle");
+    const weekdaysEl = $("weekdays");
+    const daysEl = $("days");
+    const viewSelect = $("viewSelect");
+    const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    function renderWeekdays() {
+      weekdaysEl.innerHTML = WEEKDAYS.map(
+        (d) => `<div class="weekday">${d}</div>`
+      ).join("");
+    }
+
+    function populateMonthSelect() {
+      const now = new Date();
+      const startYear = now.getFullYear() - 3;
+      const endYear = now.getFullYear() + 3;
+      const opts = [];
+      for (let y = startYear; y <= endYear; y++) {
+        for (let m = 0; m < 12; m++) {
+          const d = new Date(y, m, 1);
+          opts.push({
+            v: `${y}-${pad(m + 1)}-01`,
+            label: d.toLocaleString(undefined, {
+              month: "long",
+              year: "numeric",
+            }),
+          });
+        }
+      }
+      viewSelect.innerHTML = opts
+        .map((o) => `<option value="${o.v}">${o.label}</option>`)
+        .join("");
+    }
+
+    function render() {
+      const year = current.getFullYear();
+      const month = current.getMonth();
+      monthTitle.textContent = current.toLocaleString(undefined, {
+        month: "long",
+        year: "numeric",
+      });
+      viewSelect.value = `${year}-${pad(month + 1)}-01`;
+      daysEl.innerHTML = "";
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const prevMonthDays = new Date(year, month, 0).getDate();
+
+      for (let i = 0; i < 42; i++) {
+        const cell = document.createElement("div");
+        cell.className = "day";
+        const dayOffset = i - firstDayIndex;
+        let dateNum,
+          cellDate,
+          inactive = false;
+
+        if (dayOffset < 0) {
+          dateNum = prevMonthDays + dayOffset + 1;
+          cellDate = new Date(year, month - 1, dateNum);
+          inactive = true;
+        } else if (dayOffset >= daysInMonth) {
+          dateNum = dayOffset - daysInMonth + 1;
+          cellDate = new Date(year, month + 1, dateNum);
+          inactive = true;
+        } else {
+          dateNum = dayOffset + 1;
+          cellDate = new Date(year, month, dateNum);
+        }
+
+        const iso = cellDate.toISOString().slice(0, 10);
+        cell.innerHTML = `<div class="num">${dateNum}</div><div class="events" data-date="${iso}"></div>`;
+        if (inactive) cell.classList.add("inactive");
+        if (new Date().toDateString() === cellDate.toDateString())
+          cell.classList.add("today");
+
+        daysEl.appendChild(cell);
+      }
+    }
+
+    viewSelect.addEventListener("change", (e) => {
+      const [y, m] = e.target.value.split("-");
+      current.setFullYear(parseInt(y), parseInt(m) - 1, 1);
+      render();
+    });
+
+    renderWeekdays();
+    populateMonthSelect();
+    render();
+
+    function setupDropdown(id) {
+      const dropdown = $(id);
+      const display = dropdown.querySelector(".select-display");
+      const checkboxes = dropdown.querySelectorAll("input[type='checkbox']");
+
+      display.addEventListener("click", () => {
+        dropdown.classList.toggle("open");
+      });
+
+      checkboxes.forEach((cb) => {
+        cb.addEventListener("change", updateDisplay);
+      });
+
+      function updateDisplay() {
+        const selected = Array.from(checkboxes)
+          .filter((cb) => cb.checked)
+          .map((cb) => cb.value);
+        if (selected.length === 0) {
+          display.textContent = "-- Select Employees --";
+          display.classList.add("placeholder");
+        } else {
+          display.textContent = selected.join(", ");
+          display.classList.remove("placeholder");
+        }
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
+      });
+
+      return () =>
+        Array.from(checkboxes)
+          .filter((cb) => cb.checked)
+          .map((cb) => cb.value);
+    }
+
+    const getAddedEmployees = setupDropdown("employeeAddDropdown");
+    const getRemovedEmployees = setupDropdown("employeeRemoveDropdown");
+
+    $("addEmployeesBtn").addEventListener("click", () => {
+      const day = $("daySelect").value;
+      const time = $("timeSelect").value;
+      const employees = getAddedEmployees();
+
+      if (!day || !time || employees.length === 0) {
+        alert("Please fill all fields before adding employees.");
+        return;
+      }
+
+      const assignment = { day, time, added: employees };
+      let data = JSON.parse(localStorage.getItem("manager_assignments") || "[]");
+      data.push(assignment);
+      localStorage.setItem("manager_assignments", JSON.stringify(data));
+      alert(`Added ${employees.join(", ")} to ${day} (${time})`);
+    });
+
+    $("removeEmployeesBtn").addEventListener("click", () => {
+      const day = $("daySelect").value;
+      const time = $("timeSelect").value;
+      const employees = getRemovedEmployees();
+
+      if (!day || !time || employees.length === 0) {
+        alert("Please fill all fields before removing employees.");
+        return;
+      }
+
+      const assignment = { day, time, removed: employees };
+      let data = JSON.parse(localStorage.getItem("manager_assignments") || "[]");
+      data.push(assignment);
+      localStorage.setItem("manager_assignments", JSON.stringify(data));
+      alert(`Removed ${employees.join(", ")} from ${day} (${time})`);
+    });
+
+    $("submitCalendar").addEventListener("click", () => {
+      const data = localStorage.getItem("manager_assignments");
+      if (!data || data === "[]") {
+        alert("No changes to submit.");
+        return;
+      }
+      console.log("Submitted calendar:", data);
+      alert("Calendar submitted successfully!");
+    });
+  </script>
+</body>
+</html>
