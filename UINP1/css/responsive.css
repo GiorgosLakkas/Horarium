@@ -1,0 +1,54 @@
+@media (max-width: 900px) {
+  .cc-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* Responsive Adjustment */
+@media (max-width: 900px) {
+  .illustration img {
+    max-width: 380px;
+    width: 85%;
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 900px) {
+  .calendar-section {
+    padding: 16px;
+  }
+  .calendar-days {
+    gap: 10px;
+  }
+}
+@keyframes fadeIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .cc-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    width: 95%;
+    height: auto;
+  }
+  .login-right {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}

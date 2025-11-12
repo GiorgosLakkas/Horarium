@@ -1,0 +1,147 @@
+/* ===== Login & Register Containers ===== */
+.login-container {
+  display: flex;
+  width: 1000px;
+  min-height: 650px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  border-radius: var(--radius);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+  overflow: hidden;
+}
+
+.input-group {
+  margin: 0;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.btn {
+  margin-top: 10px;
+  padding: 14px;
+}
+
+.register-link {
+  margin-top: 25px;
+}
+
+.login-form {
+  max-width: 420px;          /* slightly wider for better proportion */
+  width: 100%;
+  margin: 0 auto;
+  align-items: center;       /* center inputs inside form */
+}
+
+.login-form .input-group {
+  width: 100%;
+  text-align: left; /* ensures label/input align left */
+}
+
+/* === Form Layout Fix === */
+.login-left form {
+  width: 100%;
+  max-width: 420px; /* wider form area */
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--muted);
+  background-color: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 6px rgba(6, 182, 212, 0.4);
+}
+
+/* Keep the heading and paragraph centered */
+.login-left h1,
+.login-left > p:first-of-type {
+  text-align: center;
+  width: 100%;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  align-items: center;       /* vertical centering */
+  justify-content: center;   /* horizontal centering */
+  padding: 40px;
+}
+
+.login-right .illustration img {
+  max-width: 100%;           /* never exceed container */
+  height: auto;              /* maintain aspect ratio */
+  object-fit: contain;
+}
+
+/* Left Section */
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* vertical centering */
+  align-items: center;       /* horizontal centering */
+  padding: 60px 40px;
+  gap: 25px;
+  text-align: center;        /* headings & form text centered */
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: var(--accent);
+  margin: 10px 0;
+}
+
+p {
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+/* Input Groups */
+.input-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-light);
+}
+
+.input-group input,
+select {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid #334155;
+  font-size: 14px;
+  background-color: #1e293b;
+  color: var(--text);
+  transition: 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.input-group input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 4px rgba(6, 182, 212, 0.5);
+}
