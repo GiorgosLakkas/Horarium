@@ -1,9 +1,11 @@
+<%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Absence Request | Horarium</title>
+  <title>Shift Change Request | Horarium</title>
   <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/auth.css">
 <link rel="stylesheet" href="css/responsive.css">
@@ -12,27 +14,27 @@
 <body class="login-page">
   <div class="login-container">
     <div class="login-left">
-      <h1>Absence Request</h1>
+      <h1>Shift Change Request</h1>
 
-      <form id="absenceForm">
+      <form id="shiftForm">
         <div class="input-group">
-          <label for="absenceType">Absence Type:</label>
-          <select id="absenceType" required>
-            <option value="">-- Select Type --</option>
-            <option value="Holiday">Holiday</option>
-            <option value="Sickness">Sickness</option>
-            <option value="Maternity Leave">Maternity Leave</option>
-          </select>
+          <label for="chooseDay">Choose Day (Unavailable):</label>
+          <input type="date" id="chooseDay" required />
         </div>
 
         <div class="input-group">
-          <label for="startDate">Start Date:</label>
-          <input type="date" id="startDate" required />
+          <label for="newDay">New Day (Available):</label>
+          <input type="date" id="newDay" required />
         </div>
 
         <div class="input-group">
-          <label for="endDate">End Date:</label>
-          <input type="date" id="endDate" required />
+          <label for="startTime">Start Time:</label>
+          <input type="time" id="startTime" required />
+        </div>
+
+        <div class="input-group">
+          <label for="endTime">End Time:</label>
+          <input type="time" id="endTime" required />
         </div>
 
         <button type="submit" class="btn">Submit Request</button>
@@ -51,15 +53,15 @@
   </div>
 
   <script>
-    document.getElementById("absenceForm").addEventListener("submit", (e) => {
+    document.getElementById("shiftForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      alert("Absence Request Submitted Successfully!");
+      alert("Shift Change Request Submitted Successfully!");
       window.location.href = "employeeDashboard.html";
     });
 
     const today = new Date().toISOString().split("T")[0];
-    document.getElementById("startDate").min = today;
-    document.getElementById("endDate").min = today;
+    document.getElementById("chooseDay").min = today;
+    document.getElementById("newDay").min = today;
   </script>
 </body>
 </html>
