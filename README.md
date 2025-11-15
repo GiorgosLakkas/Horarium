@@ -25,3 +25,5 @@ startup.bat
 
 4. Close tomcat
 shutdown.bat
+
+NOTE: Be sure to create WEB-INF folder with inner folders the classes folder and the lib (the jars) and web.xml
