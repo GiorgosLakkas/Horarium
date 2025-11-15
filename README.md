@@ -19,3 +19,11 @@ Download Apache Tomcat 10.1.48 from the official website:
 
 ```cmd
 cd "C:\TOMCAT\apache-tomcat-10.1.48\bin"
+
+3. Start tomcat 
+```cmd
+startup.bat
+
+Close tomcat
+```cmd
+shutdown.bat
