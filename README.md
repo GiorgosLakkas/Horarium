@@ -20,10 +20,10 @@ Download Apache Tomcat 10.1.48 from the official website:
 ```cmd
 cd "C:\TOMCAT\apache-tomcat-10.1.48\bin"
 
-3. Start tomcat 
+## 3. Deploy tomcat 
 startup.bat
 
-4. Close tomcat
+## 2. Shut Down Tomcat
 shutdown.bat
 
 NOTE: Be sure to create WEB-INF folder with inner folders the classes folder and the lib (the jars) and web.xml
