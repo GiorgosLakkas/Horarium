@@ -22,7 +22,7 @@ cd "C:\TOMCAT\apache-tomcat-10.1.48\bin"
 ```
 ---
 
-## 3. Deploy tomcat 
+## 3. Deploy Tomcat 
 ```
 startup.bat
 ```
