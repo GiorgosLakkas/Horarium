@@ -38,6 +38,11 @@ public class User {
     public int getCompanyId() {return this.companyId;}
     public void setCompanyId(int companyId) {this.companyId = companyId;}
 
+    //only used for cleaner flow of information between layers; we want DAO classes to communicate with application layer and not with servlets
+    public String getUserType(int userId) {
+        return UserDAO.defineUserType(userId);
+    }
+    
     @Override
     public String toString() {
         return "User Id:" + id + ", Name:" + name + ", Surname:" + surname + ", Username:" + username + ", Email:" + email + 
