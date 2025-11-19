@@ -1,4 +1,7 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+<%@ page import = "application.*"%>
+<!--in order for the application import to work, we firstly need to organize java classes-->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +35,7 @@
       <ul class="menu">
         <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
         <li><a href="#"><i class="fa-solid fa-calendar"></i> My Schedule</a></li>
-        <li><a href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
     <!-- Main Content -->
@@ -41,7 +44,7 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/profile-icon.png" alt="Profile" class="profile-icon">
-          <h1>Welcome, <span id="employeeName">Employee</span> </h1>
+          <h1>Welcome, <%=user.getUsername()%> </h1>
         </div>
         <button class="request-btn" onclick="window.location.href='request.html'">
           <i class="fa-solid fa-paper-plane"></i> Make Request
