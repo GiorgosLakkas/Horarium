@@ -2,11 +2,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const clockEl = document.getElementById("clock");
     const dateEl = document.getElementById("date-line");
-    const nameEl = document.getElementById("employeeName");
-  
-    // προσωρινό όνομα (π.χ. από login)
-    const username = localStorage.getItem("employeeName") || "Employee";
-    nameEl.textContent = username;
   
     function updateClock() {
       const now = new Date();
