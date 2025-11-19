@@ -1,7 +1,11 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+<%@ page import = "application.*"%>
+<!--in order for the application import to work, we firstly need to organize java classes-->
 
 <!DOCTYPE html>
 <html lang="en">
+  <%  User user = (User) session.getAttribute("user");
+  %>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,18 +35,18 @@
       <!-- Menu -->
       <ul class="menu">
         <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-        <li><a href="CalendarCreation.html"><i class="fa-solid fa-calendar-plus"></i> Create Calendar</a></li>
-        <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> Edit Calendar</a></li>
+        <li><a href="CalendarCreation.jsp"><i class="fa-solid fa-calendar-plus"></i> Create Calendar</a></li>
+        <li><a href="CalendarEdit.jsp"><i class="fa-solid fa-pen-to-square"></i> Edit Calendar</a></li>
         <li>
           <details>
             <summary><i class="fa-solid fa-inbox"></i> Review Request</summary>
             <ul class="menu" style="padding-left: 10px;">
-              <li><a href="ReviewShiftChange.html"><i class="fa-solid fa-arrows-rotate"></i> Review Shift Change Request</a></li>
-              <li><a href="ReviewAbsence.html"><i class="fa-solid fa-user-clock"></i> Review Absence Request</a></li>
+              <li><a href="ReviewShiftChange.jsp"><i class="fa-solid fa-arrows-rotate"></i> Review Shift Change Request</a></li>
+              <li><a href="ReviewAbsence.jsp"><i class="fa-solid fa-user-clock"></i> Review Absence Request</a></li>
             </ul>
           </details>
         </li>
-        <li><a href="login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
 
@@ -52,7 +56,7 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/profile-icon.png" alt="Profile" class="profile-icon">
-          <h1>Welcome, <span id="managerName">Manager</span></h1>
+          <h1>Welcome, <%=user.getUsername()%> </h1>
         </div>
       </header>
 
