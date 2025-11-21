@@ -55,7 +55,7 @@
       <!-- Header -->
       <header class="header">
         <div class="profile-section">
-          <img src="images/profile-icon.png" alt="Profile" class="profile-icon">
+          <img src="images/member1.png" alt="Profile" class="profile-icon">
           <h1>Welcome, <%=user.getUsername()%> </h1>
         </div>
       </header>
