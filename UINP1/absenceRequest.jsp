@@ -56,7 +56,7 @@
     document.getElementById("absenceForm").addEventListener("submit", (e) => {
       e.preventDefault();
       alert("Absence Request Submitted Successfully!");
-      window.location.href = "employeeDashboard.html";
+      window.location.href = "employeeDashboard.jsp";
     });
 
     const today = new Date().toISOString().split("T")[0];
