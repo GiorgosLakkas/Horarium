@@ -48,7 +48,7 @@
           <img src="images/profile-icon.png" alt="Profile" class="profile-icon">
           <h1>Welcome, <%=user.getUsername()%> </h1>
         </div>
-        <button class="request-btn" onclick="window.location.href='request.html'">
+        <button class="request-btn" onclick="window.location.href='request.jsp'">
           <i class="fa-solid fa-paper-plane"></i> Make Request
         </button>        
       </header>
