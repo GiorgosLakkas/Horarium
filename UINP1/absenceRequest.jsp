@@ -40,7 +40,7 @@
         <button type="submit" class="btn">Submit Request</button>
 
         <div class="register-link">
-          <a href="request.html">← Back to Request Type</a>
+          <a href="request.jsp">← Back to Request Type</a>
         </div>
       </form>
     </div>

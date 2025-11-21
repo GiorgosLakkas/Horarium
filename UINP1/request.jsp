@@ -19,12 +19,12 @@
       <p>Select the type of request you want to make:</p>
 
       <div class="request-type-buttons">
-        <button class="btn" onclick="window.location.href='shiftRequest.html'">Shift Change Request</button>
-        <button class="btn" onclick="window.location.href='absenceRequest.html'">Absence Request</button>
+        <button class="btn" onclick="window.location.href='shiftRequest.jsp'">Shift Change Request</button>
+        <button class="btn" onclick="window.location.href='absenceRequest.jsp'">Absence Request</button>
       </div>
 
       <div class="register-link">
-        <a href="employeeDashboard.html">← Back to Dashboard</a>
+        <a href="employeeDashboard.jsp">← Back to Dashboard</a>
       </div>
     </div>
 

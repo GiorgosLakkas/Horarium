@@ -78,7 +78,7 @@
         <button type="submit" class="btn">Register</button>
 
         <p class="register-link">
-          Already have an account? <a href="login.html">Sign in</a>
+          Already have an account? <a href="login.jsp">Sign in</a>
         </p>
       </form>
     </div>

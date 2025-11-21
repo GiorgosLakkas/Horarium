@@ -45,7 +45,7 @@
 
 
         <p class="register-link">
-          Don't have an account? <a href="register.html">Sign up</a>
+          Don't have an account? <a href="register.jsp">Sign up</a>
         </p>
       </form>
     </div>
