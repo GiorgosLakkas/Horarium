@@ -43,7 +43,7 @@ public class JobCalendar {
     
 
 
-    public void FillJobCalendar(List<Shift> shifts) {
+    public void fillJobCalendar(List<Shift> shifts) {
 
         shiftsByDay = shifts.stream()
         .collect(Collectors.groupingBy(Shift::getDay));
@@ -95,10 +95,8 @@ public class JobCalendar {
         String dayKey = newShift.getDay().toUpperCase();
         List<Shift> dayShifts = shiftsByDay.get(dayKey);
 
-        //The shift is added in any case unless it in null
+        //The shift is added in any case unless it is null
         dayShifts.add(newShift);
-
-
 
     }
 

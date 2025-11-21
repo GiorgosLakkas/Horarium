@@ -71,9 +71,6 @@ public class Shift {
 
     }
 
-
-
-
     @Override
     public String toString() {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
