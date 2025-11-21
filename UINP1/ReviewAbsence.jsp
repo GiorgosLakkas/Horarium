@@ -40,7 +40,7 @@
     <main class="main-content">
       <header class="header">
         <div class="profile-section">
-          <img src="images/profile-icon.png" alt="Profile" class="profile-icon">
+          <img src="images/member1.png" alt="Profile" class="profile-icon">
           <h1>Review Absence Requests <%=user.getUsername()%></span></h1>
         </div>
       </header>
