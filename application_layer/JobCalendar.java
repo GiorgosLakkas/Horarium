@@ -21,7 +21,7 @@ public class JobCalendar {
 
 
     public JobCalendar() {}
-    public JobCalendar(int calendarId, int managerId, LocalDate dateCreated, LocalDate startingDate, LocalDate endingDate, List<Employee> employees) {
+    public JobCalendar(int calendarId, int managerId, LocalDate dateCreated, LocalDate startingDate, LocalDate endingDate) {
         this.calendarId = calendarId;
         this.managerId = managerId;
         this.dateCreated = dateCreated;
