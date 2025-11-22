@@ -36,7 +36,7 @@
       <!-- Menu -->
       <ul class="menu">
         <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-        <li><a href="#"><i class="fa-solid fa-calendar"></i> My Schedule</a></li>
+        <li><a href="#"><i class="fa-solid fa-calendar"></i> My Stats</a></li>
         <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
