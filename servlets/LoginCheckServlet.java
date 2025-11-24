@@ -1,6 +1,6 @@
 package servlets;
 
-import application.*;
+import application_layer.*;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
