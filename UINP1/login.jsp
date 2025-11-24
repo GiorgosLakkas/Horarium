@@ -18,7 +18,7 @@
     <div class="login-left">
 
 
-      <h1>Welcome Back !</h1>
+      <h1>Welcome Back</h1>
       <p><b>Please Enter Your Details</b></p>
 
 
@@ -41,11 +41,11 @@
         </div>
 
 
-        <button type="submit" class="btn">Sign in</button>
+        <button type="submit" class="btn">Sign In</button>
 
 
         <p class="register-link">
-          Don't have an account? <a href="register.jsp">Sign up</a>
+          Don't have an account? <a href="register.jsp">Sign Up</a>
         </p>
       </form>
     </div>

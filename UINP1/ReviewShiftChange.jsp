@@ -94,9 +94,17 @@
             </div>
           </div>
           <div class="actions">
-            <button class="btn-icon btn-accept" title="Accept"><i class="fa-solid fa-check"></i></button>
-            <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
+
           </div>
+          <form method="post">
+          <input type="hidden" name="requestId" value="<%= requestId %>">
+              <button name="action" value="accepted" class="btn-icon btn-accept">
+            <i class="fa-solid fa-check"></i>
+              </button>
+          <button name="action" value="declined" class="btn-icon btn-decline">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+</form>
         </div>
 
         <div id="noRequests" class="no-requests" style="display: none;">No pending shift change requests.</div>
