@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<!--this page is almost identical to the login.jsp page; difference relies on the message => role: protection from unauthorized access from url-->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,12 +34,6 @@
           <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
-
-       <!-- not really needed but staying for appearance reasons -->
-        <!-- <div class="options">
-          <label><input type="checkbox"> Remember me.       </label><br>
-          <a href="#">Forgot password?</a>
-        </div> -->
 
 
         <button type="submit" class="btn">Sign in</button>
