@@ -1,4 +1,5 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+<%@ page import = "application.*"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,36 +17,37 @@
   <div class="login-container">
     <!-- Left Side -->
     <div class="login-left">
-
-
-      <h1>Welcome Back</h1>
-      <p><b>Please Enter Your Details</b></p>
-
-
-      <form action="#" method="post" class="login-form">
+       
+       <% if(request.getAttribute("error") != null) { %>		
+              <div class="alert alert-danger text-center" role="alert"><h1><%=(String)request.getAttribute("error") %></h1></div>
+       <% } else { %>
+            <h1>Welcome Back !</h1>
+            <p><b>Please Enter Your Details</b></p>
+        <% } %>
+      <form action="loginChecker.jsp" method="post" class="login-form">
+        <!--user puts credentials in the form-->
         <div class="input-group">
           <label for="email"><i class="fa-solid fa-envelope"></i> Email address</label>
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
-
 
         <div class="input-group">
           <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
 
-
-        <div class="options">
+       <!--not really needed but staying for appearance reasons-->
+        <!-- <div class="options">
           <label><input type="checkbox"> Remember me.       </label><br>
           <a href="#">Forgot password?</a>
-        </div>
+        </div> -->
 
 
-        <button type="submit" class="btn">Sign In</button>
+        <button type="submit" class="btn">Sign in</button>
 
-
+       <!--not real implementation for the register page; just UI-->
         <p class="register-link">
-          Don't have an account? <a href="register.jsp">Sign Up</a>
+          Don't have an account? <a href="register.jsp">Sign up</a>
         </p>
       </form>
     </div>
