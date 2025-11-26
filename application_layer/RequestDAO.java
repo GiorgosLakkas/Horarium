@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
-
 public class RequestDAO {
     
     //method for changing the status of pending requests based on managers' decision
@@ -42,7 +41,7 @@ public class RequestDAO {
             while (rs.next()) {
                 int requestId = rs.getInt("request_id");
                 int managerId = rs.getInt("manager_id");
-                LocalDate date = rs.getObject("date",LocalDate.class);
+                LocalDate date = rs.getDate("date_created").toLocalDate();
                 String stringStatus = rs.getString("status");
                 Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
                 requests.add(new Request(requestId,employeeId,managerId,date,status));
@@ -89,14 +88,14 @@ public class RequestDAO {
             while (rs.next()) {
                 int requestId = rs.getInt("request_id");
                 int employeeId = rs.getInt("employee_id");
-                LocalDate date = rs.getObject("date",LocalDate.class);
+                LocalDate date = rs.getDate("date_created").toLocalDate();
                 String stringStatus = rs.getString("status");
                 Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
-                LocalDate starDate = rs.getObject("start_date",LocalDate.class);
-                LocalDate endDate = rs.getObject("end_date",LocalDate.class);
+                LocalDate startDate = rs.getDate("start_date").toLocalDate();
+                LocalDate endDate = rs.getDate("end_date").toLocalDate();
                 String type = rs.getString("absence_type");
                 AbsenceRequest.AbsenceType absenceType = AbsenceRequest.AbsenceType.valueOf(type.toUpperCase());
-                requests.add(new AbsenceRequest(requestId,employeeId,managerId,date,status,starDate,endDate,absenceType));   
+                requests.add(new AbsenceRequest(requestId,employeeId,managerId,date,status,startDate,endDate,absenceType));   
             }
             return requests;   
         } catch (Exception e) {
@@ -119,13 +118,13 @@ public class RequestDAO {
             while (rs.next()) {
                 int requestId = rs.getInt("request_id");
                 int employeeId = rs.getInt("employee_id");
-                LocalDate date = rs.getObject("date",LocalDate.class);
+                LocalDate date = rs.getDate("date").toLocalDate();
                 String stringStatus = rs.getString("status");
                 Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
-                LocalDate oldShiftDate = rs.getObject("old_shift_type",LocalDate.class);
-                LocalDate newShiftDate = rs.getObject("new_shift_date",LocalDate.class);
-                LocalDateTime startingTime = rs.getObject("starting_time", LocalDateTime.class);
-                LocalDateTime endingTime = rs.getObject("ending_time",LocalDateTime.class);
+                LocalDate oldShiftDate = rs.getDate("old_shift_type").toLocalDate();
+                LocalDate newShiftDate = rs.getDate("new_shift_date").toLocalDate();
+                LocalDateTime startingTime = rs.getTimestamp("starting_time").toLocalDateTime();
+                LocalDateTime endingTime = rs.getTimestamp("ending_time").toLocalDateTime();
                 requests.add(new ShiftChangeRequest(requestId,employeeId,managerId,date,status,oldShiftDate,newShiftDate,startingTime,endingTime));   
             }
             return requests;   
