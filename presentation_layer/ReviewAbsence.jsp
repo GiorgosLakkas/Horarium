@@ -1,10 +1,13 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
-<%@ page import = "application.*"%>
+<%@ page import = "application_layer.*"%>
 
 <!DOCTYPE html>
 <html lang="en">
-  <% User user = (User)session.getAttribute("user");
+  <%  User user = (User) session.getAttribute("user");
+      if (user == null) {
   %>
+    <jsp:forward page="forcedLogin.jsp"/>
+  <% } %>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
