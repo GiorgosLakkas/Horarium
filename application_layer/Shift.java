@@ -11,14 +11,14 @@ public class Shift {
     private int shiftId;
     private int employeeId;
     private int managerId;
-    private int calendarId;
-    private LocalDate date;             
+    private int calendarId;            
     private LocalTime startTime; 
     private LocalTime endTime;
+    private LocalDate date; 
 
     public Shift() {}
 
-    public Shift(int shiftId, int employeeId, int managerId, int calendarId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public Shift(int shiftId, int employeeId, int managerId, int calendarId, LocalTime startTime, LocalTime endTime,  LocalDate date) {
 
 
         // I'm not sure if the validity of the date inputs will be checked here
@@ -29,22 +29,23 @@ public class Shift {
         this.employeeId = employeeId;
         this.managerId = managerId;
         this.shiftId = shiftId;
-        this.date = date;
+        this.calendarId = calendarId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.date = date;
     }
 
  
-    public int getEmployeeID() {return employeeId;}
-    public int getShiftID() {return shiftId;}
-    public int getManagerID() {return managerId;}
+    public int getEmployeeId() {return employeeId;}
+    public int getShiftId() {return shiftId;}
+    public int getManagerId() {return managerId;}
     public int getCalendarId() {return calendarId;}
     public LocalDate getDate() {return date;}
     public LocalTime getStartTime() {return startTime;}
     public LocalTime getEndTime() {return endTime;}
-    public void setEmployeeID(Integer employeeId) {this.employeeId = employeeId;}
-    public void setShiftID(Integer shiftId) {this.shiftId = shiftId;}
-    public void setManagerID(Integer managerId) {this.managerId = managerId;}
+    public void setEmployeeId(Integer employeeId) {this.employeeId = employeeId;}
+    public void setShiftId(Integer shiftId) {this.shiftId = shiftId;}
+    public void setManagerId(Integer managerId) {this.managerId = managerId;}
     public void setCalendarId(int calendarId) {this.calendarId = calendarId;}
     public void setDate(LocalDate date) {this.date = date;}
     public void setStartTime(LocalTime startTime) {this.startTime = startTime;}
