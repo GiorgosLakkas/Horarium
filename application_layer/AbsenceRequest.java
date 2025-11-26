@@ -21,6 +21,23 @@ public class AbsenceRequest extends Request {
         this.absenceType = absenceType;
     }
 
+    public static int countWeekdays(LocalDate startDate, LocalDate endDate) {
+        int requestedDays = 0;
+
+        LocalDate date = startDate;
+        while (!date.isAfter(endDate)) {
+            DayOfWeek day = date.getDayOfWeek();
+            if (day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY) {
+                requestedDays++;
+            }
+            date = date.plusDays(1);
+        }
+
+        return requestedDays;
+    }
+
+
+
     public LocalDate getStartDate() {return this.startDate;}
     public void setStartDate(LocalDate startDate) {this.startDate = startDate;}
     public LocalDate getEndDate() {return this.endDate;}

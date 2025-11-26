@@ -68,8 +68,12 @@ public class JobCalendar {
         return shiftsByDay.getOrDefault(day, Collections.emptyList());
     }
 
-    public Map<String, List<Shift>> getAllShifts() {
-        return shiftsByDay;
+    public List<Shift> getAllShifts() {
+        List<Shift> allShifts = shiftsByDay.values()
+                            .stream()
+                            .flatMap(List::stream)
+                            .toList();
+        return allShifts; 
     }
     
 
