@@ -58,7 +58,6 @@
       <div class="requests-container">
         <h2 class="requests-title">Requests Done</h2>
         
-          <div class="request-card">
             <% RequestDAO rd = new RequestDAO();
             List<Request> requests = new ArrayList<>();
             String s = user.getName() + " " + user.getSurname();
@@ -69,13 +68,14 @@
             <% } else {
             for (Request r : requests) {
             %>
+            <div class="request-card">
               <div class="request-info">
                 <!--string pattern for the initials in name,surname; found at stackoverflow-->
                 <div class="employee-avatar"><%=s.replaceAll("^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$", "$1$2").toUpperCase()%></div>
                 <div>
                   <!-- <div class="employee-name"><%=user.getName() + " " + user.getSurname()%></div> -->
                   <div class="request-details">
-                    Date: <strong><a href="requestDetails.jsp?rid=<%=r.getRequestId()%>"><%=r.getDate()%></strong><br />
+                    Date: <strong><a href="requestDetails.jsp?rid=<%=r.getRequestId()%>"><%=r.getDate()%></a></strong>
                   </div>
                 </div>
               </div>
