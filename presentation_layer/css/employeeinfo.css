@@ -1,0 +1,297 @@
+/* ==========================
+   Horarium - Employee Info (Pie + Stats)
+   ========================== */
+
+.stats-section { 
+  display:flex; 
+  flex-direction:column; 
+  gap:22px; 
+}
+
+.panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+  border-radius:var(--radius);
+  box-shadow:0 8px 30px rgba(2,6,23,.6);
+  padding:18px 20px 22px;
+}
+
+.panel-header{ 
+  display:flex; 
+  align-items:center; 
+  justify-content:space-between; 
+  margin-bottom:12px; 
+}
+
+.panel-header h2{ 
+  margin:0; 
+  font-size:18px; 
+  color:var(--text); 
+}
+
+/* ================================
+   Left/Right layout
+================================ */
+.pie-wrap{
+  display:flex;
+  flex-direction:row;           
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:32px;
+  width:100%;
+}
+
+/* ================================
+   PIE CHART (LEFT)
+================================ */
+
+.pie-card{
+  display:flex;
+  flex-direction:row;       /* PIE LEFT / LEGEND RIGHT */
+  gap:24px;
+  align-items:center;       /* <-- VERTICAL CENTERING OF PIE */
+  justify-content:flex-start;
+  flex:0 1 45%;
+  margin-top:100px;
+  width:100%;
+ 
+}
+
+
+
+.pie{ 
+  width:220px; 
+  height:220px; 
+}
+
+.pie path{ 
+  fill:none; 
+  stroke-width:4; 
+}
+
+.pie .bg{ 
+  stroke: rgba(255,255,255,0.08); 
+}
+
+.pie .fill{
+  stroke: url(#gradPie);
+  filter: drop-shadow(0 0 8px rgba(34,211,238,0.35));
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.pie-label{ 
+  fill:var(--text); 
+  font-size:8px; 
+  font-weight:700; 
+  text-anchor:middle; 
+}
+
+/* PIE LEGEND */
+.pie-legend{ 
+  display:grid; 
+  gap:10px; 
+  text-align:left;
+
+}
+
+.legend-item{ 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+  color:var(--text-light); 
+  justify-content:flex-start;
+}
+
+.legend-item strong{ 
+  color:var(--text); 
+  min-width:32px; 
+  text-align:right; 
+}
+
+.dot{ 
+  width:10px; 
+  height:10px; 
+  border-radius:50%; 
+  display:inline-block; 
+}
+
+.dot-rem{ background:#22d3ee; }
+.dot-used{ background:#0ea5e9; }
+.dot-total{ background:#7b84a1; }
+
+/* ================================
+   STATS RIGHT COLUMN
+================================ */
+
+.stats-tabs {
+  width:100%;
+  flex:0 1 55%;               /* a bit bigger than pie side */
+  background:rgba(15,23,42,0.9);
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,0.35);
+  padding:16px 16px 18px;
+  box-shadow:0 14px 38px rgba(15,23,42,0.9);
+}
+
+/* Each section: Requests / Workload */
+.stats-section-box{
+  padding-top:10px;
+  margin-top:8px;
+  border-top:1px solid rgba(148,163,184,0.35);
+}
+
+.stats-section-box:first-child{
+  margin-top:0;
+  padding-top:0;
+  border-top:none;
+}
+
+.stats-section-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.stats-section-title i{
+  font-size:12px;
+  color:#22d3ee;
+}
+
+/* STATS GRID / CARDS */
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.stat-card{
+  background:rgba(15,23,42,0.95);
+  border-radius:12px;
+  padding:10px 12px;
+  border:1px solid rgba(148,163,184,0.45);
+  box-shadow:0 6px 20px rgba(15,23,42,0.85);
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.stat-card.span-2{
+  grid-column:span 2;
+}
+
+.stat-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-light);
+  opacity:0.9;
+}
+
+.stat-value{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.stat-value.negative{
+  color:#f97373;
+}
+
+.stat-inline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.badge{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(56,189,248,0.12);
+  border:1px solid rgba(56,189,248,0.5);
+  color:#e0f2fe;
+}
+
+/* ============================================
+   Mobile / Responsive Fixes
+=============================================== */
+@media (max-width: 800px) {
+  .pie { width:180px; height:180px; }
+
+  .pie-wrap{
+    flex-direction:column;     
+    gap:18px;
+  }
+
+  .pie-card{
+    flex:1 1 auto;
+    flex-direction:column;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+
+  .stats-tabs{
+    flex:1 1 auto;
+    width:100%;
+  }
+
+  .stat-grid{
+    grid-template-columns:1fr;
+  }
+
+  .stat-card.span-2{
+    grid-column:span 1;
+  }
+}
+
+
+
+.under-pie-info {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 10px 14px 0 14px;
+}
+
+.under-pie-block {
+  background: rgba(15,23,42,0.92);
+  border: 1px solid rgba(148,163,184,0.45);
+  box-shadow: 0 6px 20px rgba(15,23,42,0.85);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.under-pie-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  opacity: 0.9;
+  letter-spacing: 0.06em;
+}
+
+.under-pie-value {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: var(--text);
+}
+
+.under-pie-message {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+

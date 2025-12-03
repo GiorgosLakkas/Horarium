@@ -36,8 +36,15 @@
       <!-- Menu -->
       <ul class="menu">
         <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-        <li><a href="#"><i class="fa-solid fa-calendar"></i> My Stats</a></li>
-        <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        <li>
+          <details>
+            <summary><i class="fa-solid fa-inbox"></i> My Stats</summary>
+            <ul class="menu" style="padding-left: 10px;">
+              <li><a href="EmployeeInfo.jsp"><i class="fa-solid fa-arrows-rotate"></i> Employee Information</a></li>
+              <li><a href="RequestHistory.jsp"><i class="fa-solid fa-user-clock"></i> Request History</a></li>
+            </ul>
+          </details>
+        </li>        <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
     <!-- Main Content -->
