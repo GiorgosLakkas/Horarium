@@ -1,8 +1,15 @@
+<%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+<%@ page import = "application_layer.*"%>
+
 <!DOCTYPE html>
 <html lang="en">
+  <%User user = (User)session.getAttribute("user");
+    if (user == null) { %> 
+      <jsp:forward page = "forcedLogin.jsp"/>
+  <% } %>
 <head>
   <meta charset="UTF-8" />
-  <title>Horarium | My Stats</title>
+  <title>Horarium | Employee Info</title>
 
   <!-- Κοινά styles + theme -->
   <link rel="stylesheet" href="css/global.css" />
@@ -46,7 +53,7 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/member1.png" alt="Profile" class="profile-icon">
-          <h1>Welcome, <span id="employeeName">Employee</span></h1>
+          <h1>Welcome, <%=user.getName() + " " + user.getSurname()%></h1>
         </div>
       </header>
 
