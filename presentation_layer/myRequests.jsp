@@ -1,6 +1,7 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
-<%@ page import = "application.*"%>
+<%@ page import = "application_layer.*"%>
 <%@ page import = "java.util.*" %>
+<%@ page import="java.util.regex.*" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,25 +54,34 @@
             <h1><%=user.getName() + " " + user.getSurname()%> 's Requests</h1>
           </div>      
         </header>
-        <div class="requests-container">
+
+      <div class="requests-container">
         <h2 class="requests-title">Requests Done</h2>
-        <% RequestDAO rd = new RequestDAO();
-          List<Request> requests = new ArrayList<>();
-          requests = rd.retriveEmployeeRequests(user.getId());
-          for (Request r : requests) {
-          %>
-            <div class="request-card">
+        
+          <div class="request-card">
+            <% RequestDAO rd = new RequestDAO();
+            List<Request> requests = new ArrayList<>();
+            String s = user.getName() + " " + user.getSurname();
+            requests = rd.retriveEmployeeRequests(user.getId());
+            boolean flag = (requests.size()>0) ? false : true;
+            if (flag) { %>
+              <strong>No Requests Made Yet</strong>
+            <% } else {
+            for (Request r : requests) {
+            %>
               <div class="request-info">
-                <div class="employee-avatar">CB</div>
+                <!--string pattern for the initials in name,surname; found at stackoverflow-->
+                <div class="employee-avatar"><%=s.replaceAll("^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$", "$1$2").toUpperCase()%></div>
                 <div>
                   <!-- <div class="employee-name"><%=user.getName() + " " + user.getSurname()%></div> -->
                   <div class="request-details">
-                    Date :<strong><a href = "requestDetails.jsp?rid=<%=user.getId()%>"><%=r.getDate()%></strong><br />
+                    Date: <strong><a href="requestDetails.jsp?rid=<%=r.getRequestId()%>"><%=r.getDate()%></strong><br />
                   </div>
                 </div>
               </div>
             </div>
-          <% } %>
+          <% } 
+            } %>
 
        
       </div>
