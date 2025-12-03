@@ -33,7 +33,7 @@ public class RequestDAO {
     public List<Request> retriveEmployeeRequests(int employeeId) {
         List<Request> requests = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Request as r, Employee as e WHERE employee_id = ? AND r.employeeId = e.employeeId";
+        String sql = "SELECT * FROM Request as r, Employee as e WHERE employee_id = ? AND r.employee_id = e.id";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,employeeId);
@@ -41,6 +41,7 @@ public class RequestDAO {
             while (rs.next()) {
                 int requestId = rs.getInt("request_id");
                 int managerId = rs.getInt("manager_id");
+                //using this because of old mysql driver
                 LocalDate date = rs.getDate("date_created").toLocalDate();
                 String stringStatus = rs.getString("status");
                 Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
@@ -59,18 +60,20 @@ public class RequestDAO {
     //method for defining subclass of a request stored in the Request table
     public String defineRequestType(int requestId) {
         Connection con = DBConnection.openConnection();
-        String requestType = "absence";
-        String sql = "SELECT * FROM Request as r WHERE r.request_id IN (SELECT request_id FROM AbsenceRequest)";
+        String requestType = "shiftChange"; 
+        String sql = "SELECT request_id FROM AbsenceRequest WHERE request_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, requestId);
             ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                requestType = "shiftChange";
+
+            if (rs.next()) {
+                requestType = "absence"; 
             }
             return requestType;
         } catch (Exception e) {
-            e.getMessage();
-            return requestType;
+            e.printStackTrace();
+            return requestType; 
         } finally {
             DBConnection.closeConnection(con);
         }
@@ -121,7 +124,7 @@ public class RequestDAO {
                 LocalDate date = rs.getDate("date").toLocalDate();
                 String stringStatus = rs.getString("status");
                 Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
-                LocalDate oldShiftDate = rs.getDate("old_shift_type").toLocalDate();
+                LocalDate oldShiftDate = rs.getDate("old_shift_date").toLocalDate();
                 LocalDate newShiftDate = rs.getDate("new_shift_date").toLocalDate();
                 LocalDateTime startingTime = rs.getTimestamp("starting_time").toLocalDateTime();
                 LocalDateTime endingTime = rs.getTimestamp("ending_time").toLocalDateTime();
@@ -136,5 +139,52 @@ public class RequestDAO {
         }
     }
 
+    //method for fetching remaining data based on the subclass type
+    public Request fetchRemainingAttributes(Request request, String type) {
+        Connection con = DBConnection.openConnection();
+        String sql;
+        if (type.equalsIgnoreCase("absence")) {
+            sql = "SELECT start_date, end_date, absence_type FROM AbsenceRequest WHERE request_id = ?";
+        } else if (type.equalsIgnoreCase("shiftChange")) {
+            sql = "SELECT old_shift_date, new_shift_date, starting_time, ending_time FROM ShiftChangeRequest WHERE request_id = ?";
+        } else {
+            throw new IllegalArgumentException("Unknown request type: " + type);
+        }
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, request.getRequestId());
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+            if (type.equalsIgnoreCase("absence")) {
+                return new AbsenceRequest(
+                    request.getRequestId(),
+                    request.getEmployeeId(),
+                    request.getManagerId(),
+                    request.getDate(),
+                    request.getStatus(),
+                    rs.getDate("start_date").toLocalDate(),
+                    rs.getDate("end_date").toLocalDate(),
+                    AbsenceRequest.AbsenceType.valueOf(rs.getString("absence_type").toUpperCase()));
+            } else {
+                return new ShiftChangeRequest(
+                    request.getRequestId(),
+                    request.getEmployeeId(),
+                    request.getManagerId(),
+                    request.getDate(),
+                    request.getStatus(),
+                    rs.getDate("old_shift_date").toLocalDate(),
+                    rs.getDate("new_shift_date").toLocalDate(),
+                    rs.getTimestamp("starting_time").toLocalDateTime(),
+                    rs.getTimestamp("ending_time").toLocalDateTime());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
 
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
