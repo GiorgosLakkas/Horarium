@@ -1,6 +1,11 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
 <%@ page import = "application_layer.*"%>
 
+
+<%@ page import = "java.util.*"%>
+<%@ page import="java.util.regex.*" %>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <%  User user = (User) session.getAttribute("user");
@@ -44,21 +49,27 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/member1.png" alt="Profile" class="profile-icon">
-          <h1>Review Absence Requests <%=user.getUsername()%></span></h1>
+          <h1>Review Absence Requests <%=user.getUsername()%></h1>
         </div>
       </header>
 
+      <% RequestDAO rd = new RequestDAO();
+      UserDAO ud = new UserDAO();
+      List<AbsenceRequest> absence = new ArrayList<>();
+      absence = rd.retrieveManagerAbsenceRequests(user.getId()); %>
+        
+      <h2 class="requests-title">Absence Requests</h2>
+      <% for (AbsenceRequest a : absence) { %>
       <div class="requests-container">
-        <h2 class="requests-title">Absence Requests</h2>
 
         <div class="request-card">
           <div class="request-info">
-            <div class="employee-avatar">JD</div>
+            <div class="employee-avatar"><%=ud.getEmployeeNameDetailsById(a.getEmployeeId()).replaceAll("^\\s*([a-zA-Z]).*\\s+([a-zA-Z])\\S+$", "$1$2").toUpperCase()%></div>
             <div>
-              <div class="employee-name">John Doe</div>
+              <div class="employee-name"><%=ud.getEmployeeNameDetailsById(a.getEmployeeId())%></div>
               <div class="request-details">
-                Reason: <strong>Holiday</strong><br />
-                Start: <strong>Nov 6</strong> — End: <strong>Nov 10</strong>
+                Reason: <strong><%=a.getAbsenceType()%></strong><br />
+                Start: <strong><%=a.getStartDate()%></strong> — End: <strong><%=a.getEndDate()%></strong>
               </div>
             </div>
           </div>
@@ -67,43 +78,8 @@
             <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
           </div>
         </div>
+      <% } %>
 
-        <div class="request-card">
-          <div class="request-info">
-            <div class="employee-avatar">MA</div>
-            <div>
-              <div class="employee-name">Maria Anders</div>
-              <div class="request-details">
-                Reason: <strong>Sickness</strong><br />
-                Start: <strong>Nov 12</strong> — End: <strong>Nov 14</strong>
-              </div>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="btn-icon btn-accept" title="Accept"><i class="fa-solid fa-check"></i></button>
-            <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-
-        <div class="request-card">
-          <div class="request-info">
-            <div class="employee-avatar">AJ</div>
-            <div>
-              <div class="employee-name">Alex Johnson</div>
-              <div class="request-details">
-                Reason: <strong>Maternity Leave</strong><br />
-                Start: <strong>Nov 8</strong> — End: <strong>Dec 8</strong>
-              </div>
-            </div>
-          </div>
-          <div class="actions">
-            <button class="btn-icon btn-accept" title="Accept"><i class="fa-solid fa-check"></i></button>
-            <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-
-        <div id="noRequests" class="no-requests" style="display: none;">No pending absence requests.</div>
-      </div>
     </main>
   </div>
 
@@ -112,4 +88,3 @@
   <script src="js/js/clock.js" defer></script>
 </body>
 </html>
-
