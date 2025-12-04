@@ -3,7 +3,7 @@ package application_layer;
 import java.time.LocalDate;
 
 public class Request {
-    enum Status {
+    public enum Status {
         PENDING, ACCEPTED, REJECTED
     }
 
