@@ -1,5 +1,7 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
-<%@ page import = "application_layer.*"%>
+<%@ page import = "application.*"%>
+<%@ page import = "java.util.*"%>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,11 +101,13 @@
 
           <text x="18" y="20.5" class="pie-label">--%</text>
         </svg>
-
+        <% UserDAO ud = new UserDAO();
+        Employee employee = ud.fetchEmployeeDetails(user);
+        %>
         <div class="pie-legend">
           <div class="legend-item">
             <span class="dot dot-rem"></span>
-            Remaining <strong id="remDays">--</strong>
+            Remaining <strong><%=employee.getDaysOffRemaining()%></strong>
           </div>
           <div class="legend-item">
             <span class="dot dot-used"></span>
@@ -136,21 +140,34 @@
             <i class="fa-solid fa-list-check"></i>
             Requests
           </div>
+  
+          <% RequestDAO rd = new RequestDAO();
+          List<Request> requests = new ArrayList<>();
+          requests = rd.retriveEmployeeRequests(user.getId());
+          int approved = 0, declined = 0;
+          for (Request r : requests) {
+            if (Request.Status.ACCEPTED == r.getStatus()) {
+              approved++;
+            } else if (Request.Status.REJECTED == r.getStatus()) {
+              declined++;
+            }
+          }
+          %>
 
           <div class="stat-grid">
             <div class="stat-card">
-              <span class="stat-label">Approved</span>
-              <span class="stat-value" id="totalApproved">--</span>
+              <span class="stat-label">Approved </span>
+              <span class="stat-value"><%=approved%></span> 
             </div>
 
             <div class="stat-card">
               <span class="stat-label">Declined</span>
-              <span class="stat-value negative" id="totalDeclined">--</span>
+              <span class="stat-value negative"><%=declined%></span>
             </div>
 
             <div class="stat-card span-2">
               <span class="stat-label">Total Requests</span>
-              <span class="stat-value" id="totalRequests">--</span>
+              <span class="stat-value"><%=requests.size()%></span>
             </div>
           </div>
         </div>
@@ -165,18 +182,18 @@
           <div class="stat-grid">
             <div class="stat-card span-2">
               <span class="stat-label">Assigned managers</span>
-              <span class="stat-value" id="assignedManagers">--</span>
+              <span class="stat-value"><%=ud.getManagerNameDetailsById(employee.getManagerId())%></span>
             </div>
 
             <!-- Shifts next 7 days: LONGER (full width) -->
             <div class="stat-card span-2">
-              <span class="stat-label">Shifts next 7 days</span>
+              <span class="stat-label">Shifts this week</span>
               <span class="stat-value" id="shift7">--</span>
             </div>
 
             <!-- No 14 days; only 30-day overview -->
             <div class="stat-card span-2">
-              <span class="stat-label">Shifts next 30 days</span>
+              <span class="stat-label">Shifts this month</span>
               <div class="stat-inline">
                 <span class="stat-value" id="shift30">--</span>
                 <span class="badge" id="workloadLevel">--</span>
