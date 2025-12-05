@@ -1,52 +1,95 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
-<%@ page import = "application_layer.*"%>
+<%@ page isELIgnored="true" %>
+<%@ page import = "application.*"%>
+<%@ page import = "java.util.*"%>
 
 <!DOCTYPE html>
 <html lang="en">
-  <%  User user = (User) session.getAttribute("user");
+<%
+    User user = (User) session.getAttribute("user");
     if (user == null) {
-  %>
-  <jsp:forward page="forcedLogin.jsp"/>
-  <% } %>
+%>
+    <jsp:forward page="forcedLogin.jsp"/>
+<%
+    }
+%>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manager Calendar</title>
   <link rel="stylesheet" href="css/calendar.css" />
-  <link rel="stylesheet" href="css/calendar-edit-create.css" />
+  <link rel="stylesheet" href="css/EditCalendar.css" />
   <link rel="icon" type="image/png" href="images/tabicon.png" />
 </head>
+
 <body>
   <img src="images/logo.png" alt="Company Logo" class="logo">
 
+
+
   <div class="container">
-    <!-- Left: Calendar -->
+    <!-- LEFT SIDE — CALENDAR -->
     <div class="calendar-side">
-      <div
-        class="calendar-card"
-        style="width: 100%; max-width: 800px; min-height: 420px"
-      >
+      <div class="calendar-card" style="width: 100%; max-width: 800px; min-height: 420px;">
         <div class="main">
+
+          <!-- Header with Month + Navigation -->
           <div class="header">
             <div class="month-title" id="monthTitle">Month Year</div>
-            <div class="nav"><select id="viewSelect"></select></div>
+
+            <div class="nav">
+              <button id="prevMonth" class="nav-btn">‹</button>
+              <button id="nextMonth" class="nav-btn">›</button>
+            </div>
           </div>
 
-          <div class="grid" id="calendarGrid">
-            <div class="weekdays" id="weekdays"></div>
-            <div class="days" id="days"></div>
-          </div>
+          <!-- Calendar Grid -->
+          <div id="calendarGrid" class="calendar-grid"></div>
+
         </div>
+
+
+
+        <h3>Shifts for Selected Day:</h3>
+        <ul id="shiftList"></ul>
+
+
+      
       </div>
-      <div class="submit-section">
-        <button id="submitCalendar">Submit Calendar</button>
-      </div>
+
+      <%
+  String errorMessage = (String) request.getAttribute("error");
+  if (errorMessage != null && !errorMessage.isEmpty()) {
+%>
+    <div class="error-message" style="color:red; margin-bottom:10px; font-weight:bold;">
+        <%= errorMessage %>
+    </div>
+<%
+  }
+%> 
+
+      <button id="clearShiftsBtn" 
+      style="background:#d9534f;
+             color:white;
+             margin-top:10px;
+             padding:10px 10px;
+             font-size:12px;
+             width:110px;   /* adjust this */
+             border:none;
+             border-radius:6px;
+             cursor:pointer;">
+        Clear All Shifts
+      </button>
+
+
     </div>
 
-    <!-- Right: Manager Controls -->
+    <!-- RIGHT SIDE — MANAGER CONTROLS -->
+    <form action = "CreationChecker.jsp" method="post" class="Vrexei">
     <div class="form-side">
-      <h2>Create Work Schedule</h2>
+      <h2>Create Shift</h2>
 
+      <!-- Day Selection -->
       <label for="daySelect">Select Day of Week:</label>
       <select id="daySelect">
         <option value="">-- Select Day --</option>
@@ -59,29 +102,186 @@
         <option>Sunday</option>
       </select>
 
-      <label for="timeSelect">Select Time Period:</label>
-      <select id="timeSelect">
-        <option value="">-- Select Time --</option>
-        <option>08:00 - 12:00</option>
-        <option>12:00 - 16:00</option>
-        <option>16:00 - 20:00</option>
-        <option>20:00 - 00:00</option>
-      </select>
-
-      <label>Select Employees:</label>
-      <div class="custom-select" id="employeeDropdown">
+    
+    <!-- Time Selection -->
+      <div class="time-container">
+        <input type="text" id="timeInput" placeholder="Select time" readonly>
+        <button type="button" id="clearTime">Clear</button>
+    
+        <div id="timePopup" class="popup hidden">
+          <label>Hour:</label>
+          <select id="hourSelect">
+            <option value="">--</option>
+          </select>
+    
+          <label>Minute:</label>
+          <select id="minuteSelect">
+            <option value="">--</option>
+          </select>
+    
+          <button type="button" id="applyTime">Apply</button>
+        </div>
+      </div>
+      <div class="time-container2">
+        <input type="text" id="timeInput2" placeholder="Select time" readonly>
+        <button type="button" id="clearTime2">Clear</button>
+    
+        <div id="timePopup2" class="popup hidden">
+          <label>Hour:</label>
+          <select id="hourSelect2">
+            <option value="">--</option>
+          </select>
+    
+          <label>Minute:</label>
+          <select id="minuteSelect2">
+            <option value="">--</option>
+          </select>
+    
+          <button type="button" id="applyTime2">Apply</button>
+        </div>
+      </div>
+    
+<%
+UserDAO ud = new UserDAO();
+List<Employee> employees = new ArrayList<>();
+employees = ud.fetchEmployeesByManagerId(user.getId());%>
+      <!-- ADD EMPLOYEES -->
+      <label>Select Employees to Add:</label>
+      <div class="custom-select" id="employeeAddDropdown">
         <div class="select-display placeholder">-- Select Employees --</div>
         <div class="options">
-          <label><input type="checkbox" value="John Doe" /> John Doe</label>
-          <label><input type="checkbox" value="Maria Anders" /> Maria Anders</label>
-          <label><input type="checkbox" value="Robert Fox" /> Robert Fox</label>
-          <label><input type="checkbox" value="Jane Smith" /> Jane Smith</label>
-          <label><input type="checkbox" value="Alex Johnson" /> Alex Johnson</label>
+    <!--<label><input type="checkbox" value="John Doe" /> John Doe</label>
+        <label><input type="checkbox" value="Alex Johnson" /> Alex Johnson</label> -->
+<% for (Employee e: employees){
+%>  
+    <label><input type="checkbox" value="<%= e.getSurname() %>" data-id ="<%= e.getId() %>" /><%= ud.getEmployeeNameDetailsById(e.getId()) %></label>        
+<%
+}
+%>
         </div>
       </div>
 
-      <button id="assignBtn">Assign Employees</button>
+      <button type="button" id="addShiftBtn">Add Shift</button>
+
     </div>
+
+    <input type="hidden" id="startDate" name="startDate">
+    <input type="hidden" id="endDate" name="endDate">
+    <input type="hidden" id="shiftsData" name="shiftsData">
+
+    <div class="submit-section">
+      <button type="button" id="submitCalendar"
+        style="
+        font-size:16px;
+        padding:12px 100px;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;"> 
+        Submit New Calendar</button>
+    </div>
+
+    </form>
   </div>
+
+
+
+  <script src="js/CreateCalendar.js" defer></script>
+  <script>
+    let shiftList = [];
+
+    function updateHiddenShifts() {
+      document.getElementById("shiftsData").value = JSON.stringify(shiftList);
+    }
+
+
+    function getWeekStart(date) {
+      const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
+      const diffToMonday = day === 0 ? -6 : 1 - day; // shift so Monday is start
+      const monday = new Date(date);
+      monday.setDate(date.getDate() + diffToMonday);
+      return monday;
+    }
+
+    let currentDate = new Date(); 
+
+    let currentWeekStart = getWeekStart(currentDate); 
+    const weekdayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  
+    document.getElementById("addShiftBtn").addEventListener("click", () => {
+    
+        const selectedDay = document.getElementById("daySelect").value;
+        const startTime = document.getElementById("timeInput").value;
+        const endTime = document.getElementById("timeInput2").value;
+    
+        const selectedEmployees = [...document.querySelectorAll("#employeeAddDropdown input:checked")]
+            .map(e => e.dataset.id);
+
+        const dayIndex = weekdayNames.indexOf(selectedDay);
+
+        const shiftDate = new Date(currentWeekStart);
+        shiftDate.setDate(currentWeekStart.getDate() + dayIndex + 1);
+    
+        // Add a separate shift for each employee and append to the list
+        selectedEmployees.forEach(employee => {
+            const shift = {
+                day: shiftDate.toISOString().split('T')[0],
+                start: startTime,
+                end: endTime,
+                employee: employee
+            };
+    
+            // Add to the array
+            shiftList.push(shift);
+    
+            // Append to UL directly without clearing previous items
+            //const lis = document.createElement("li");
+            //lis.textContent = `${shift.day}, ${shift.start}, ${shift.end}, ${shift.employee}`;
+            //document.getElementById("shiftList").appendChild(lis);
+            //document.getElementById("shiftsData").appendChild(lis);
+        });
+        updateHiddenShifts();
+    });
+
+    document.getElementById("clearShiftsBtn").addEventListener("click", () => {
+      shiftList = [];
+      updateHiddenShifts();
+    });
+    document.getElementById("prevMonth").addEventListener("click", () => {
+
+      shiftList = [];
+      updateHiddenShifts();
+   
+    
+    });
+    document.getElementById("nextMonth").addEventListener("click", () => {
+
+      shiftList = [];
+      updateHiddenShifts();
+
+    });
+
+    document.getElementById("submitCalendar").addEventListener("click", () => {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const date = currentDate.getDate();
+    
+      const dayOfWeek = currentDate.getDay(); 
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      const startOfWeek = new Date(year, month, date + diffToMonday);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+      startOfWeek.setDate(startOfWeek.getDate() + 1);
+      endOfWeek.setDate(endOfWeek.getDate() + 1);
+  
+      document.getElementById("startDate").value = startOfWeek.toISOString().split('T')[0];
+      document.getElementById("endDate").value = endOfWeek.toISOString().split('T')[0];
+  
+      document.getElementById("shiftsData").value = JSON.stringify(shiftList);
+  
+      document.querySelector(".Vrexei").submit();
+    });
+  </script>
+
 </body>
 </html>
