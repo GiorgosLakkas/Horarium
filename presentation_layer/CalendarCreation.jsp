@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manager Calendar</title>
   <link rel="stylesheet" href="css/calendar.css" />
-  <link rel="stylesheet" href="css/EditCalendar.css" />
+  <link rel="stylesheet" href="css/CreateCalendar.css" />
   <link rel="icon" type="image/png" href="images/tabicon.png" />
 </head>
 
