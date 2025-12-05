@@ -30,6 +30,15 @@ public class JobCalendar {
         
     }
 
+    public JobCalendar(int managerId, LocalDate dateCreated, LocalDate startingDate, LocalDate endingDate) {
+
+        this.managerId = managerId;
+        this.dateCreated = dateCreated;
+        this.startingDate = startingDate;
+        this.endingDate = endingDate;
+        
+    }
+
     public int getCalendarId() {return this.calendarId;}
     public void setCalendarId(int calendarId) {this.calendarId = calendarId;}
     public int getManagerId() {return this.managerId;}
