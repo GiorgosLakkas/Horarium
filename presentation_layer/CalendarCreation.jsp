@@ -1,6 +1,6 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
 <%@ page isELIgnored="true" %>
-<%@ page import = "application_layer.*"%>
+<%@ page import = "application.*"%>
 <%@ page import = "java.util.*"%>
 
 <!DOCTYPE html>
@@ -168,6 +168,8 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
     <input type="hidden" id="startDate" name="startDate">
     <input type="hidden" id="endDate" name="endDate">
     <input type="hidden" id="shiftsData" name="shiftsData">
+    <input type="hidden" id="dateSubmitted" name="dateSubmitted">
+    <input type="hidden" id="userId" name="userId" value="<%= user.getId() %>">
 
     <div class="submit-section">
       <button type="button" id="submitCalendar"
@@ -229,15 +231,18 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
                 end: endTime,
                 employee: employee
             };
-    
-            // Add to the array
-            shiftList.push(shift);
-    
-            // Append to UL directly without clearing previous items
-            //const lis = document.createElement("li");
-            //lis.textContent = `${shift.day}, ${shift.start}, ${shift.end}, ${shift.employee}`;
-            //document.getElementById("shiftList").appendChild(lis);
-            //document.getElementById("shiftsData").appendChild(lis);
+
+            const alreadyExists = shiftList.some(s =>
+            s.day === shift.day &&
+            s.start === shift.start &&
+            s.end === shift.end &&
+            s.employee === shift.employee
+            );
+
+            if (!alreadyExists) {
+              shiftList.push(shift);
+            }
+
         });
         updateHiddenShifts();
     });
@@ -278,6 +283,9 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
       document.getElementById("endDate").value = endOfWeek.toISOString().split('T')[0];
   
       document.getElementById("shiftsData").value = JSON.stringify(shiftList);
+      document.getElementById("dateSubmitted").value = currentDate;
+      document.getElementById("userId").value = "<%= user.getId() %>"; 
+
   
       document.querySelector(".Vrexei").submit();
     });

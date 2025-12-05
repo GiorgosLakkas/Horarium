@@ -35,6 +35,22 @@ public class Shift {
         this.date = date;
     }
 
+    public Shift(int employeeId, int managerId, int calendarId, LocalTime startTime, LocalTime endTime,  LocalDate date) {
+
+
+        // I'm not sure if the validity of the date inputs will be checked here
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalArgumentException("End time must be after start time.");
+        }
+
+        this.employeeId = employeeId;
+        this.managerId = managerId;
+        this.calendarId = calendarId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.date = date;
+    }
+
  
     public int getEmployeeId() {return employeeId;}
     public int getShiftId() {return shiftId;}

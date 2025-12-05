@@ -280,7 +280,6 @@ let currentDayName = null;
 
 // Add shift button
 addShiftBtn.addEventListener("click", () => {
-    // Use the dropdown value to select the day for creating shift
     const day = daySelect.value;
     if (!day) {
         alert("Please select a day!");
@@ -306,16 +305,33 @@ addShiftBtn.addEventListener("click", () => {
     // Initialize array if first shift for the day
     if (!scheduleData[day]) scheduleData[day] = [];
 
-    // Add a shift for each employee
     selectedEmployees.forEach(emp => {
-        scheduleData[day].push({
+
+        const newShift = {
             employee: emp,
             startTime,
             endTime
-        });
+        };
+
+        // -------------------------------
+        // 🔥 DUPLICATE CHECK
+        // -------------------------------
+        const alreadyExists = scheduleData[day].some(s =>
+            s.employee === newShift.employee &&
+            s.startTime === newShift.startTime &&
+            s.endTime === newShift.endTime
+        );
+
+        if (alreadyExists) {
+            console.log(`Duplicate shift skipped: ${emp} ${startTime}-${endTime}`);
+            return; // Skip adding
+        }
+
+        // Add shift only if NOT duplicate
+        scheduleData[day].push(newShift);
     });
 
-    // Render shifts only if the clicked day matches this day
+    // If the selected day is currently displayed, refresh it
     if (currentDayName === day) {
         renderShifts(currentDayName);
     }
