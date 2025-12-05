@@ -35,7 +35,7 @@ public class Shift {
         this.date = date;
     }
 
-    public Shift(int employeeId, int managerId, LocalTime startTime, LocalTime endTime,  LocalDate date) {
+    public Shift(int employeeId, int managerId, int calendarId, LocalTime startTime, LocalTime endTime,  LocalDate date) {
 
 
         // I'm not sure if the validity of the date inputs will be checked here
