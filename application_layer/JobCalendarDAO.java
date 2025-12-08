@@ -23,7 +23,7 @@ public class JobCalendarDAO {
             PreparedStatement stm = con.prepareStatement(query);
             stm.setInt(1,jobCalendar.getManagerId());
             ResultSet rs = stm.executeQuery();
-            if (!rs.next()) {
+            if (rs.next()) {
               maximum = rs.getInt("maximum");
             }
             return maximum;
