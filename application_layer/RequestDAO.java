@@ -33,7 +33,7 @@ public class RequestDAO {
     public List<Request> retriveEmployeeRequests(int employeeId) {
         List<Request> requests = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Request as r, Employee as e WHERE employee_id = ? AND r.employee_id = e.id";
+        String sql = "SELECT * FROM Request as r, Employee as e WHERE employee_id = ? AND r.employee_id = e.id ORDER BY r.date_created DESC";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,employeeId);
