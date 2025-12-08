@@ -92,6 +92,7 @@ public class ShiftDAO {
                 ps.setObject(4,s.getStartTime());
                 ps.setObject(5,s.getEndTime());
                 ps.setObject(6, s.getDay());
+                ps.executeUpdate();
             }
         } catch (Exception e) {
             e.getMessage();
