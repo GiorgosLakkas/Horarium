@@ -80,22 +80,23 @@ public class ShiftDAO {
     }
 
     //method for putting a created shift list in the Shift table (database)
-    public void putShiftsToDatabase(List<Shift> shifts) {
+    public void putShiftsToDatabase(List<Shift> shifts) throws Exception {
         Connection con = DBConnection.openConnection();
-        String sql = "INSERT INTO Shift VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO Shift(employee_id, manager_id, job_calendar_id, start_time, end_time, date) VALUES(?,?,?,?,?,?)";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             for (Shift s : shifts) {
                 ps.setInt(1, s.getEmployeeId());
                 ps.setInt(2,s.getManagerId());
                 ps.setInt(3,s.getCalendarId());
-                ps.setObject(4,s.getStartTime());
-                ps.setObject(5,s.getEndTime());
-                ps.setObject(6, s.getDay());
+                ps.setTime(4, java.sql.Time.valueOf(s.getStartTime()));
+                ps.setTime(5, java.sql.Time.valueOf(s.getEndTime()));
+                ps.setDate(6, java.sql.Date.valueOf(s.getDate()));
+
                 ps.executeUpdate();
             }
         } catch (Exception e) {
-            e.getMessage();
+            throw new Exception("Problem Occured!" + e.getMessage(), e);
         } finally {
             DBConnection.closeConnection(con);
         }

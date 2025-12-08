@@ -13,9 +13,10 @@ public class JobCalendarDAO {
         try { 
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,jobCalendar.getManagerId());
-            ps.setObject(2,jobCalendar.getDateCreated());
-            ps.setObject(3,jobCalendar.getStartingDate());
-            ps.setObject(4,jobCalendar.getEndingDate());
+            ps.setDate(2, java.sql.Date.valueOf(jobCalendar.getDateCreated()));
+
+            ps.setDate(3, java.sql.Date.valueOf(jobCalendar.getStartingDate()));
+            ps.setDate(4, java.sql.Date.valueOf(jobCalendar.getEndingDate()));
             int row = ps.executeUpdate();
             if (row == 0) {
                 throw new Exception("Problem: No insertion was performed");
@@ -28,8 +29,7 @@ public class JobCalendarDAO {
             }
             return maximum;
         } catch (Exception e) {
-            e.getMessage();
-            throw new Exception("Problem Occured!");
+            throw new Exception("Problem Occured!" + e.getMessage(), e);
         } finally {
             DBConnection.closeConnection(con);
         }

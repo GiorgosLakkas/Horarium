@@ -223,12 +223,12 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
         const dayIndex = weekdayNames.indexOf(selectedDay);
 
         const shiftDate = new Date(currentWeekStart);
-        shiftDate.setDate(currentWeekStart.getDate() + dayIndex + 1);
+        shiftDate.setDate(currentWeekStart.getDate() + dayIndex );
     
         // Add a separate shift for each employee and append to the list
         selectedEmployees.forEach(employee => {
             const shift = {
-                day: shiftDate.toISOString().split('T')[0],
+                day: shiftDate,
                 start: startTime,
                 end: endTime,
                 employee: employee
