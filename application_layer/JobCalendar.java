@@ -45,8 +45,8 @@ public class JobCalendar {
     public void setManagerId(int managerId) {this.managerId = managerId;}
     public LocalDate getDateCreated() {return this.dateCreated;}
     public void setDateCreated(LocalDate dateCreated) {this.dateCreated = dateCreated;}
-    public LocalDate getStartingTime() {return this.startingDate;}
-    public void setStartingTime(LocalDate startingDate) {this.startingDate = startingDate;}
+    public LocalDate getStartingDate() {return this.startingDate;}
+    public void setStartingDate(LocalDate startingDate) {this.startingDate = startingDate;}
     public LocalDate getEndingDate() {return this.endingDate;}
     public void setEndingDate(LocalDate endingDate) {this.endingDate = endingDate;}
     
