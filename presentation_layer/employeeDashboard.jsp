@@ -41,7 +41,7 @@
             <summary><i class="fa-solid fa-inbox"></i> My Stats</summary>
             <ul class="menu" style="padding-left: 10px;">
               <li><a href="EmployeeInfo.jsp"><i class="fa-solid fa-arrows-rotate"></i> Employee Information</a></li>
-              <li><a href="RequestHistory.jsp"><i class="fa-solid fa-user-clock"></i> Request History</a></li>
+              <li><a href="myRequests.jsp"><i class="fa-solid fa-user-clock"></i> Request History</a></li>
             </ul>
           </details>
         </li>        <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>

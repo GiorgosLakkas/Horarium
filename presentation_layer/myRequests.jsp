@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/calendarNikou.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/manager.css">
+  <link rel="stylesheet" href="css/RequestHistoryButton.css">
     <link rel="stylesheet" href="css/calendar-skin.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="images/tabicon.png" />
@@ -40,8 +41,16 @@
       
         <!-- Menu -->
         <ul class="menu">
-          <li><a href="employeeDashboard.jsp" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-          <li><a href="myStats.jsp"><i class="fa-solid fa-calendar"></i> My Stats</a></li>
+          <li><a href="employeeDashboard.jsp"><i class="fa-solid fa-house"></i> Home</a></li>
+         <li>
+          <details open>
+            <summary><i class="fa-solid fa-chart-pie"></i> My Stats</summary>
+            <ul class="menu" style="padding-left: 10px;">
+              <li><a href="EmployeeInfo.jsp"><i class="fa-solid fa-user"></i> Employee Information</a></li>
+              <li><a href="myRequests.jsp" class="active"><i class="fa-solid fa-file-lines"></i> Request History</a></li>
+            </ul>
+          </details>
+        </li>
           <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
         </ul>
       </aside>
@@ -56,7 +65,7 @@
         </header>
 
       <div class="requests-container">
-        <h2 class="requests-title">Requests Done</h2>
+        <h2 class="requests-title">Your Request History</h2>
         
             <% RequestDAO rd = new RequestDAO();
             List<Request> requests = new ArrayList<>();
@@ -75,8 +84,9 @@
                 <div>
                   <!-- <div class="employee-name"><%=user.getName() + " " + user.getSurname()%></div> -->
                   <div class="request-details">
-                    Date: <strong><a href="requestDetails.jsp?rid=<%=r.getRequestId()%>"><%=r.getDate()%></a></strong>
+                    <a class="view-details-btn" href="requestDetails.jsp?rid=<%=r.getRequestId()%>">View Details</a>
                   </div>
+                  Date:<a><strong><%=r.getDate()%></a></strong>
                 </div>
               </div>
             </div>

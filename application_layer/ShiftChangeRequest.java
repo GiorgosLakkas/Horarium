@@ -20,7 +20,7 @@ public class ShiftChangeRequest extends Request {
 
     public LocalDate getOldShiftDate() {return this.oldShiftDate;}
     public void setOldShiftDate(LocalDate oldShiftDate) {this.oldShiftDate = oldShiftDate;}
-    public LocalDate getNewShifDate() {return this.newShiftDate;}
+    public LocalDate getNewShiftDate() {return this.newShiftDate;}
     public void setNewShiftChange(LocalDate newShiftDate) {this.newShiftDate = newShiftDate;}
     public LocalDateTime getStartingTime() {return this.startingTime;}
     public void setStartingTime(LocalDateTime startingTime) {this.startingTime = startingTime;}

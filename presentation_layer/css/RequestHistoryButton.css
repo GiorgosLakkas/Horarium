@@ -1,0 +1,73 @@
+/* ===== Request History Button Overrides ===== */
+
+/* Keep the original card styling; just allow positioned children */
+.request-card {
+  position: relative; /* so the button can be positioned relative to the card */
+}
+
+/* Make the left side (avatar + text) align nicely */
+.request-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Date should look like plain text (no clickable behavior) */
+.request-card a:not(.view-details-btn) {
+  text-decoration: none;
+  color: inherit;
+  pointer-events: none;
+  cursor: default;
+}
+
+/* Optional: make date text slightly softer */
+.request-details,
+.request-details + a {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* ===== "View Details" Gradient Button on the Right ===== */
+
+.view-details-btn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  
+  padding: 8px 16px;
+  background: linear-gradient(90deg, #00bcd4, #0077ff); /* same gradient as .btn */
+  border: none;
+  border-radius: 10px;
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.25s ease-in-out;
+}
+
+/* Hover effect similar to .btn / .submit-btn */
+.view-details-btn:hover {
+  transform: translateY(-52%);
+  opacity: 0.9;
+  box-shadow: 0 6px 16px rgba(0, 188, 212, 0.45);
+}
+
+/* ===== Responsive tweak so it doesn't overlap on small screens ===== */
+@media (max-width: 600px) {
+  .view-details-btn {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .request-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

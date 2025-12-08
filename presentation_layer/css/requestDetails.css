@@ -1,0 +1,15 @@
+/* Request Details – tweaks on top of employeeinfo.css */
+
+.request-details-panel {
+  /* this class just marks the stats-tabs container for this page */
+}
+
+/* Make sure long values wrap nicely */
+.request-details-panel .stat-value {
+  word-break: break-word;
+}
+
+/* Optional: slightly tighter spacing beneath titles on this page */
+.request-details-panel .stats-section-title {
+  margin-bottom: 10px;
+}
