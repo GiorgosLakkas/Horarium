@@ -83,7 +83,7 @@ public class RequestDAO {
     public List<AbsenceRequest> retrieveManagerAbsenceRequests(int managerId) {
         List<AbsenceRequest> requests = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT a.request_id,employee_id,manager_id,date_created,status,start_date,end_date,absence_type FROM Request as r, AbsenceRequest as a, Manager as m WHERE r.manager_id = m.id AND r.request_id = a.request_id AND manager_id = ?";
+        String sql = "SELECT a.request_id,employee_id,manager_id,date_created,status,start_date,end_date,absence_type FROM Request as r, AbsenceRequest as a, Manager as m WHERE r.manager_id = m.id AND r.request_id = a.request_id AND manager_id = ? ORDER BY r.date_created DESC";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,managerId);
@@ -113,7 +113,7 @@ public class RequestDAO {
     public List<ShiftChangeRequest> retrieveManagerShiftChangeRequests(int managerId) {
         List<ShiftChangeRequest> requests = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT s.request_id,employee_id,manager_id,date_created,status,old_shift_date,new_shift_date, starting_time, ending_time FROM Request as r, ShiftChangeRequest as s, Manager as m WHERE r.manager_id = m.id AND r.request_id = s.request_id AND manager_id = ?";
+        String sql = "SELECT s.request_id,employee_id,manager_id,date_created,status,old_shift_date,new_shift_date, starting_time, ending_time FROM Request as r, ShiftChangeRequest as s, Manager as m WHERE r.manager_id = m.id AND r.request_id = s.request_id AND manager_id = ? ORDER BY r.date_created DESC";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,managerId);
