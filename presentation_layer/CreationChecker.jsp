@@ -59,9 +59,8 @@
         }
     
         ShiftDAO sdao = new ShiftDAO();
-        out.println(shiftListFinal);
         sdao.putShiftsToDatabase(shiftListFinal);
     }
-%>    
+%> <jsp:forward page="CalendarCreation.jsp" />
 
 
