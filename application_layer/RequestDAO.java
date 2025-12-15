@@ -187,4 +187,43 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
+    //method for inserting new shift change requests in database tables 
+    public void insertShiftChangeRequest(ShiftChangeRequest shiftChangeRequest) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "INSERT INTO ShiftChangeRequest(old_shift_date,new_shift_date,starting_time,ending_time) VALUES (?,?,?,?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setDate(1,java.sql.Date.valueOf(shiftChangeRequest.getOldShiftDate()));
+            ps.setDate(2,java.sql.Date.valueOf(shiftChangeRequest.getNewShiftDate()));
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(shiftChangeRequest.getStartingTime()));
+            ps.setTimestamp(4, java.sql.Timestamp.valueOf(shiftChangeRequest.getEndingTime()));
+            int row = ps.executeUpdate();
+            if (row == 0) {
+                throw new Exception("Shift Change Request was not inserted");
+            }
+        } catch(Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
+    //method for inserting new absence requests in database tables 
+    public void insertAbsenceRequest(AbsenceRequest absenceRequest) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "INSERT INTO AbsenceRequest(start_date,end_date,absence_type) VALUES (?,?,?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setDate(1,java.sql.Date.valueOf(absenceRequest.getStartDate()));
+            ps.setDate(2,java.sql.Date.valueOf(absenceRequest.getEndDate()));
+            ps.setString(3,absenceRequest.getAbsenceType().toString().toLowerCase());
+            int row = ps.executeUpdate();
+            if (row == 0) {
+                throw new Exception("Absence Request was not inserted");
+            }
+        } catch(Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
