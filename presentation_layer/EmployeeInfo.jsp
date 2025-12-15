@@ -178,7 +178,6 @@
 
   <!-- Scripts -->
   <script src="js/clock.js" defer></script>
-  <script src="js/dashboardGreeting.js" defer></script>
 
 </body>
 </html>

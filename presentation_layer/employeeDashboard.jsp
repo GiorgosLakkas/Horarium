@@ -5,11 +5,8 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <%
-  User user = (User)session.getAttribute("user");
-  if (user == null) { %> 
-    <jsp:forward page = "forcedLogin.jsp"/>
-<% } %>
+  <%  User user = (User) session.getAttribute("user");
+  %>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

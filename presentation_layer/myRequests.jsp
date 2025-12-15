@@ -98,8 +98,7 @@
     </main>
   </div>
         
-    
-    <script src="js/reviewAbsence.js" defer></script>
+  
     <script src="js/clock.js" defer></script>
 
   </body>

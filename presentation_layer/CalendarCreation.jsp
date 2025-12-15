@@ -3,8 +3,6 @@
 <%@ page import = "application.*"%>
 <%@ page import = "java.util.*"%>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <%
@@ -171,7 +169,7 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
     <input type="hidden" id="endDate" name="endDate">
     <input type="hidden" id="shiftsData" name="shiftsData">
     <input type="hidden" id="dateSubmitted" name="dateSubmitted">
-    <!-- <input type="hidden" id="userId" name="userId" value="<%= user.getId() %>"> -->
+    <input type="hidden" id="userId" name="userId" value="<%= user.getId() %>">
 
     <div class="submit-section">
       <button type="button" id="submitCalendar"
@@ -223,12 +221,12 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
         const dayIndex = weekdayNames.indexOf(selectedDay);
 
         const shiftDate = new Date(currentWeekStart);
-        shiftDate.setDate(currentWeekStart.getDate() + dayIndex );
+        shiftDate.setDate(currentWeekStart.getDate() + dayIndex + 1);
     
         // Add a separate shift for each employee and append to the list
         selectedEmployees.forEach(employee => {
             const shift = {
-                day: shiftDate,
+                day: shiftDate.toISOString().split('T')[0],
                 start: startTime,
                 end: endTime,
                 employee: employee
@@ -285,8 +283,8 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
       document.getElementById("endDate").value = endOfWeek.toISOString().split('T')[0];
   
       document.getElementById("shiftsData").value = JSON.stringify(shiftList);
-      document.getElementById("dateSubmitted").value = currentDate.toISOString().split('T')[0];
-      //document.getElementById("userId").value = "<%= user.getId() %>"; 
+      document.getElementById("dateSubmitted").value = currentDate;
+      document.getElementById("userId").value = "<%= user.getId() %>"; 
 
   
       document.querySelector(".Vrexei").submit();
