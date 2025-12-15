@@ -22,32 +22,38 @@
     <div class="login-left">
       <h1>Shift Change Request</h1>
 
-      <form id="shiftForm">
+      <p id="timeError" class="error-message" style="display:none;"></p>
+
+      <form form action = "requestChecker.jsp" id="shiftChangeForm" method="post">
         <div class="input-group">
           <label for="chooseDay">Choose Day (Unavailable):</label>
-          <input type="date" id="chooseDay" required />
+          <input type="date" id="chooseDay" name="oldDay" required />
         </div>
 
         <div class="input-group">
           <label for="newDay">New Day (Available):</label>
-          <input type="date" id="newDay" required />
+          <input type="date" id="newDay" name="newDay" required />
         </div>
 
         <div class="input-group">
           <label for="startTime">Start Time:</label>
-          <input type="time" id="startTime" required />
+          <input type="time" id="startTime" name="startTime" required />
         </div>
 
         <div class="input-group">
           <label for="endTime">End Time:</label>
-          <input type="time" id="endTime" required />
+          <input type="time" id="endTime" name="endTime" required />
         </div>
 
-        <button type="submit" class="btn">Submit Request</button>
+        <!-- this shows the controller that this is a shiftChangeRequest -->
+        <input type="hidden" name="source" value="2">
 
-        <div class="register-link">
-          <a href="request.jsp">← Back to Request Type</a>
-        </div>
+        <button type="submit" class="btn" style="margin-bottom: 50px;">Submit Request</button>
+
+        <button type="button" class="btn" onclick="window.location.href='request.jsp'">
+          ← Back to Request Type
+        </button>
+
       </form>
     </div>
 
@@ -58,16 +64,6 @@
     </div>
   </div>
 
-  <script>
-    document.getElementById("shiftForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      alert("Shift Change Request Submitted Successfully!");
-      window.location.href = "employeeDashboard.jsp";
-    });
-
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("chooseDay").min = today;
-    document.getElementById("newDay").min = today;
-  </script>
+  <script src="js/shiftChange.js"></script> 
 </body>
 </html>
