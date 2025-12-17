@@ -9,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const today = new Date();
     const realWeekStart = new Date(today);
     realWeekStart.setDate(today.getDate() - today.getDay()); // Monday=0 if adjusted
-    //realWeekStart.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-
+    
 
     // RENDER WEEKLY CALENDAR
     function renderCalendar() {
