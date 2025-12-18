@@ -1,6 +1,7 @@
 package application_layer;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class JobCalendarDAO {
 
@@ -34,4 +35,39 @@ public class JobCalendarDAO {
             DBConnection.closeConnection(con);
         }
     }
+
+        public JobCalendar getCurrentJobCalendar(LocalDate date, int managerId) throws Exception {
+        String sql = "SELECT * FROM job_calendar " +
+                     "WHERE starting_date <= ? AND ending_date >= ? AND manager_id = ? " +
+                     "ORDER BY calendar_id DESC LIMIT 1";
+        Connection con = DBConnection.openConnection();
+    
+        try {
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setDate(1, java.sql.Date.valueOf(date));
+            ps.setDate(2, java.sql.Date.valueOf(date));
+            ps.setInt(3, managerId);
+    
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new JobCalendar(
+                        rs.getInt("calendar_id"),
+                        rs.getInt("manager_id"),
+                        rs.getDate("date_created").toLocalDate(),
+                        rs.getDate("starting_date").toLocalDate(),
+                        rs.getDate("ending_date").toLocalDate()
+                    );
+                } else {
+                    return null; 
+                }
+            }
+    
+        } catch (Exception e) {
+            throw new Exception("Problem Occurred! " + e.getMessage(), e);
+        } finally {
+            DBConnection.closeConnection(con);            
+        }
+    }
+    
 }

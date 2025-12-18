@@ -1,18 +1,7 @@
-/* Calendar Section */
 .calendar-section {
-  background-color: var(--card);
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  min-height: 350px;
-}
-
-/* ===== Calendar Design Enhancements (merged from calendar.css) ===== */
-.calendar-section {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-  border-radius: var(--radius);
-  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .calendar-header {
@@ -74,10 +63,10 @@
 .day-header {
   font-weight: 700;
   color: var(--accent);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: center;
   border-bottom: 2px solid rgba(6, 182, 212, 0.3);
-  padding-bottom: 5px;
+  padding-bottom: 6px;
 }
 
 .day-content p {
@@ -92,6 +81,19 @@
   box-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.06);
 }
 
+.day-column {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ← BIGGER GAP BETWEEN SLOTS */
+}
+
+
+.day-column:last-child {
+  border-right: none;
+}
+
 @media (max-width: 900px) {
   .calendar-section {
     padding: 16px;
@@ -101,65 +103,120 @@
   }
 }
 
-/* Calendar Layout */
-.calendar-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px;
-}
 
-.week-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 10px;
-}
+/* ===== Grid Calendar View (35 empty squares, NO JS changes) ===== */
 
-#weekRange {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--text);
-  margin: 0 20px;
-}
-
-.calendar-days {
+/* Weekdays header - force one row */
+.calendar-weekdays{
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 15px;
-  margin-top: 15px;
+  width: 100%;
+  margin: 10px 0 12px 0;
+  text-align: center;
+  font-weight: 600;
+  color: #cfd6e4;
+}
+.calendar-weekdays > div{
+  padding: 6px 0;
 }
 
-.day-card {
-  background-color: #162238;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+/* 7 columns x 5 rows background grid */
+#calendarDays.calendar-days.grid-view{
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 320px); /* αν θες το ρυθμίζουμε */
+  border-radius: 18px;
+
+  /* grid lines = τετραγωνάκια */
+  background-image:
+  linear-gradient(rgba(255,255,255,0.18) 1.5px, transparent 1.5px),
+  linear-gradient(90deg, rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
+  background-size: calc(100% / 7) calc(100% / 5);
+  background-position: 0 0;
+}
+
+/* Hide the 7 day-cards that JS renders (μένει μόνο το grid) */
+#calendarDays.calendar-days.grid-view > *{
+  display: none !important;
+}
+
+/* Weekly calendar grid */
+.week-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0px;
+  height: 100%;
+}
+
+/* One day column */
+.day-column {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: 0.3s;
 }
 
-.day-card:hover {
-  background-color: #1d2d4b;
-  transform: translateY(-3px);
-}
-
+/* Day title */
 .day-header {
+  text-align: center;
   font-weight: 700;
   color: var(--accent);
   margin-bottom: 8px;
-  text-align: center;
-  border-bottom: 2px solid rgba(6, 182, 212, 0.3);
-  padding-bottom: 5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.3);
 }
 
-.day-content p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: var(--text-light);
+/* Shift slots */
+.shift-slot {
+  flex: none;
+  margin-top: 0px;
+  /* min-height: 90px;   */
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  padding: 10px;
+  color: #cbd5f5;
+  height: 50px;
+}
+
+/* Filled shift */
+.shift-slot.filled {
+  background: rgba(6, 182, 212, 0.18);
+  border: 1px solid rgba(6, 182, 212, 0.45);
+  color: #67e8f9;
+  font-weight: 600;
+}
+
+/* OFF shift */
+.shift-slot.off {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+}
+.main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.calendar-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.no-calendar {
   text-align: center;
+  font-size: 1.2em;
+  color: #888;
+  padding: 40px 0;
+  font-weight: 500;
+}
+
+.week-calendar {
+  flex: 1;
 }

@@ -1,92 +1,56 @@
-// Weekly calendar with day cards showing shift & team
 document.addEventListener("DOMContentLoaded", () => {
-  const calendarDays = document.getElementById("calendarDays");
+  const calendar = document.getElementById("weekCalendar");
   const weekRange = document.getElementById("weekRange");
-  const prevWeekBtn = document.getElementById("prevWeek");
-  const nextWeekBtn = document.getElementById("nextWeek");
 
-  let currentDate = new Date();
+  const shiftsByDay = JSON.parse(document.getElementById("shifts-data").textContent || '{}');
 
-  function getWeekDates(date) {
-    const monday = new Date(date);
-    const day = monday.getDay();
-    const diff = (day === 0 ? -6 : 1) - day;
-    monday.setDate(date.getDate() + diff);
+  const today = new Date();
+  const monday = new Date(today);
+  const day = today.getDay() || 7;
+  monday.setDate(today.getDate() - day + 1);
 
-    const week = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      week.push(d);
+  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  const hasCalendar = Object.keys(shiftsByDay).length > 0;
+
+  if (!hasCalendar) {
+    // Show message and exit
+    calendar.innerHTML = '<div class="no-calendar">No calendar created yet.</div>';
+    weekRange.textContent = '';
+    return;
+  }
+
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  weekRange.textContent = `${monday.toLocaleDateString()} - ${sunday.toLocaleDateString()}`;
+
+  days.forEach(dayName => {
+    const col = document.createElement("div");
+    col.className = "day-column";
+
+    const header = document.createElement("div");
+    header.className = "day-header";
+    header.textContent = dayName;
+    col.appendChild(header);
+
+    const shifts = shiftsByDay[dayName] || [];
+    if (shifts.length === 0) {
+      const placeholder = document.createElement("div");
+      placeholder.className = "shift-slot placeholder";
+      placeholder.textContent = "Day Off";
+      col.appendChild(placeholder);
+    } else {
+      shifts.forEach(shift => {
+        const slot = document.createElement("div");
+        slot.className = "shift-slot filled";
+        slot.innerHTML = `
+          <div class="shift-time">${shift.time}</div>
+          <div class="shift-employee">${shift.employee}</div>
+        `;
+        if (shift.time === "OFF") slot.classList.add("off");
+        col.appendChild(slot);
+      });
     }
-    return week;
-  }
 
-  function updateCalendar() {
-    const week = getWeekDates(currentDate);
-    calendarDays.innerHTML = "";
-
-    const start = week[0].toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-    const end = week[6].toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-    weekRange.textContent = `${start} - ${end}`;
-
-    // Dummy data (θα αντικατασταθεί αργότερα με δεδομένα από DB)
-    const shifts = [
-      "09:00 - 17:00",
-      "10:00 - 18:00",
-      "08:30 - 16:30",
-      "09:30 - 17:30",
-      "09:00 - 17:00",
-      "Day Off",
-      "Day Off"
-    ];
-
-    const teams = [
-      ["Maria", "John"],
-      ["Nick", "Eleni"],
-      ["Alex", "Chris"],
-      ["George", "Maria"],
-      ["John", "Eleni"],
-      ["—"],
-      ["—"]
-    ];
-
-    const options = { weekday: "short", day: "numeric", month: "short" };
-    week.forEach((date, i) => {
-      const card = document.createElement("div");
-      card.classList.add("day-card");
-
-      const dayHeader = document.createElement("div");
-      dayHeader.classList.add("day-header");
-      dayHeader.textContent = date.toLocaleDateString("en-GB", options);
-
-      const dayContent = document.createElement("div");
-      dayContent.classList.add("day-content");
-
-      const shiftText = document.createElement("p");
-      shiftText.innerHTML = `<strong>Shift:</strong> ${shifts[i]}`;
-
-      const teamText = document.createElement("p");
-      teamText.innerHTML = `<strong>Team:</strong> ${teams[i].join(", ")}`;
-
-      dayContent.appendChild(shiftText);
-      dayContent.appendChild(teamText);
-
-      card.appendChild(dayHeader);
-      card.appendChild(dayContent);
-      calendarDays.appendChild(card);
-    });
-  }
-
-  prevWeekBtn.addEventListener("click", () => {
-    currentDate.setDate(currentDate.getDate() - 7);
-    updateCalendar();
+    calendar.appendChild(col);
   });
-
-  nextWeekBtn.addEventListener("click", () => {
-    currentDate.setDate(currentDate.getDate() + 7);
-    updateCalendar();
-  });
-
-  updateCalendar();
 });
