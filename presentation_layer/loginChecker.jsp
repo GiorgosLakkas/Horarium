@@ -49,12 +49,8 @@
     session.setAttribute("user", user);
     
     if ("employee".equals(user.getUserType(user.getId()))) {
-%>
-        <jsp:forward page="employeeDashboard.jsp" />
-<%
+        response.sendRedirect("employeeDashboard.jsp");
     } else {
-%>
-        <jsp:forward page="managerDashboard.jsp" />
-<%
+        response.sendRedirect("managerDashboard.jsp");
     }
 %>
