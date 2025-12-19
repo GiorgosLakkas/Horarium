@@ -226,4 +226,88 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
+     //method for fetching shift change request data based on a request id
+    public ShiftChangeRequest fetchShiftChangeDataByRequestId(int requestId) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT * FROM Request as r, ShiftChangeRequest as s WHERE r.request_id = s.request_id AND s.request_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,requestId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new ShiftChangeRequest(requestId, rs.getInt("employee_id"), rs.getInt("manager_id"),
+                rs.getDate("date_created").toLocalDate(),Request.Status.valueOf(rs.getString("status").toUpperCase()),
+                rs.getDate("old_shift_date").toLocalDate(),rs.getDate("new_shift_date").toLocalDate(),
+                rs.getTimestamp("starting_time").toLocalDateTime(),rs.getTimestamp("ending_time").toLocalDateTime());
+            } else {
+                throw new Exception("No shift change request exists in this id");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
+    //method for fetching absence request data based on a request id
+    public AbsenceRequest fetchAbsenceDataByRequestId(int requestId) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT * FROM Request AS r, AbsenceRequest AS a WHERE r.request_id = a.request_id AND a.request_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,requestId);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                throw new Exception("No absence request exists in this id");
+            } else {
+                return new AbsenceRequest(requestId, rs.getInt("employee_id"), 
+                rs.getInt("manager_id"),
+                rs.getDate("date_created").toLocalDate(),
+                Request.Status.valueOf(rs.getString("status").toUpperCase()),
+                rs.getDate("start_date").toLocalDate(), 
+                rs.getDate("end_date").toLocalDate(),
+                AbsenceRequest.AbsenceType.valueOf(rs.getString("absence_type").toUpperCase()));
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
+    //method for filling Days_Off table, based on calculated absence interval, after an absence request is accepted
+    public void insertDaysOff(int requestId, LocalDate starDate, LocalDate endDate) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "INSERT INTO Days_Off(request_id,days_off) VALUES (?,?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,requestId);
+            ps.setInt(2,AbsenceRequest.countWeekdays(starDate, endDate));
+            int row = ps.executeUpdate();
+            if (row == 0) {
+                throw new Exception("No days off were inserted");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
+    //method for retrieving startDate, endDate and days off for an accepted absence request 
+    public AbsenceDTO fetchAcceptedAbsenceCrucialDetails(int requestId) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT start_date,end_date,days_off FROM AbsenceRequest AS a, Days_Off AS d WHERE a.request_id = d.request_id AND a.request_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,requestId);
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) {
+                throw new Exception("No accepted absence request with this id");
+            } else {
+                return new AbsenceDTO(rs.getDate("start_date").toLocalDate(),rs.getDate("end_date").toLocalDate(),rs.getInt("days_off"));
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
