@@ -35,6 +35,30 @@ public class JobCalendarDAO {
             DBConnection.closeConnection(con);
         }
     }
+     //method for showing proper calendar in the dashboards
+    public JobCalendar fetchCurrentJobCalendar(LocalDate currentDate) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT * FROM Job_Calendar WHERE starting_date <= ? AND ending_date >= ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setDate(1,java.sql.Date.valueOf(currentDate));
+            ResultSet rs = ps.executeQuery();
+            //we suppose that it returns a single calendar for these specific dates 
+            if (rs.next()) {
+                return new JobCalendar(rs.getInt("calendar_id"),
+                rs.getInt("manager_id"),
+                rs.getDate("date_created").toLocalDate(),
+                rs.getDate("starting_date").toLocalDate(),
+                rs.getDate("ending_date").toLocalDate());
+            } else {
+                throw new Exception("No calendar with this date exists");
+            }  
+        } catch(Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    } 
 
         public JobCalendar getCurrentJobCalendar(LocalDate date, int managerId) throws Exception {
         String sql = "SELECT * FROM job_calendar " +

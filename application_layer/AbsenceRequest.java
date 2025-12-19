@@ -4,7 +4,7 @@ import java.time.* ;
 
 public class AbsenceRequest extends Request {
 
-    enum AbsenceType {
+    public enum AbsenceType {
         HOLIDAY, SICKNESS, MATERNAL 
     }
 
