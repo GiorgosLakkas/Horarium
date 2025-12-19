@@ -191,12 +191,13 @@
   font-weight: 600;
 }
 
-/* OFF shift */
 .shift-slot.off {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fecaca;
+  background-color: rgba(255, 77, 79, 0.5);  /* red with 50% opacity */
+  color: #fff;                                /* text stays white */
+  font-weight: bold;
+  border: 1px solid rgba(204, 0, 0, 0.5);    /* softer border */
 }
+
 .main-content {
   display: flex;
   flex-direction: column;

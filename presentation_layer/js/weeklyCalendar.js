@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const shifts = shiftsByDay[dayName] || [];
     if (shifts.length === 0) {
       const placeholder = document.createElement("div");
-      placeholder.className = "shift-slot placeholder";
+      placeholder.className = "shift-slot off";
       placeholder.textContent = "Day Off";
       col.appendChild(placeholder);
     } else {
