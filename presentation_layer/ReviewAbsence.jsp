@@ -1,7 +1,5 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
 <%@ page import = "application_layer.*"%>
-
-
 <%@ page import = "java.util.*"%>
 <%@ page import="java.util.regex.*" %>
 
@@ -45,6 +43,13 @@
       </ul>
     </aside>
 
+    <style>
+      form {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
+
     <main class="main-content">
       <header class="header">
         <div class="profile-section">
@@ -74,9 +79,18 @@
             </div>
           </div>
           <div class="actions">
-            <button class="btn-icon btn-accept" title="Accept"><i class="fa-solid fa-check"></i></button>
-            <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
-          </div>
+            <form action="absenceChecker.jsp" method="post" class="action-form">
+                <input type="hidden" name="requestId" value="<%= a.getRequestId() %>">
+                <button type="submit" name="action" value="accept"
+                        class="btn-icon btn-accept" title="Accept">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button type="submit" name="action" value="reject"
+                        class="btn-icon btn-decline" title="Reject">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </form>
+        </div>
         </div>
       <% } %>
 
