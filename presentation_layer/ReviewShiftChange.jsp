@@ -1,7 +1,5 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
 <%@ page import = "application_layer.*"%>
-
-
 <%@ page import = "java.util.*"%>
 <%@ page import="java.util.regex.*" %>
 <%@ page import = "java.time.format.*" %>
@@ -44,6 +42,12 @@
         <li><a href="logout.jsp"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       </ul>
     </aside>
+    <style>
+      form {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
 
     <main class="main-content">
       <header class="header">
@@ -72,10 +76,20 @@
                 </div>
               </div>
             </div>
-            <div class="actions">
-              <button class="btn-icon btn-accept" title="Accept"><i class="fa-solid fa-check"></i></button>
-              <button class="btn-icon btn-decline" title="Decline"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+          <div class="actions">
+            <form action="shiftChangeChecker.jsp" method="post" class="action-form">
+                <input type="hidden" name="requestId" value="<%=s.getRequestId()%>">
+                <button type="submit" name="action" value="accept"
+                        class="btn-icon btn-accept" title="Accept">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button type="submit" name="action" value="reject"
+                        class="btn-icon btn-decline" title="Reject">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </form>
+        </div>
+
           </div>
 
       </div>
@@ -83,7 +97,7 @@
     </main>
   </div>
 
- 
+  <script src="js/reviewShiftChange.js" defer></script>
 
   <script src="js/js/clock.js" defer></script>
 </body>
