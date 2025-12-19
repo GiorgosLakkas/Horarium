@@ -8,15 +8,13 @@
 <%@ page import="java.time.OffsetDateTime" %>
 
 
-
-
 <%
     User user = (User) session.getAttribute("user");
     String shiftList = request.getParameter("shiftsData");
     String startDateStr = request.getParameter("startDate");
     String endDateStr = request.getParameter("endDate");
     String dateCreatedStr = request.getParameter("dateSubmitted");
-    //String managerIdStr = request.getParameter("userId");
+
 
 
     if (shiftList == null || shiftList.trim().equals("[]")) {
@@ -24,13 +22,12 @@
         %><jsp:forward page="CalendarCreation.jsp" /><%
         return;
     } else {
-        // Parse dates
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
         LocalDate dateCreated = LocalDate.parse(dateCreatedStr);
         int managerId = user.getId();
     
-        // Create job calendar
+        
         JobCalendar jobCalendar = new JobCalendar(managerId, dateCreated, startDate, endDate);
         JobCalendarDAO dao = new JobCalendarDAO();
         int calendarId = dao.insertJobCalendarReturnMaxId(jobCalendar);
@@ -60,5 +57,11 @@
     
         ShiftDAO sdao = new ShiftDAO();
         sdao.putShiftsToDatabase(shiftListFinal);
+        response.sendRedirect("managerDashboard.jsp");
     }
-%> <jsp:forward page="CalendarCreation.jsp" />
+
+%> 
+
+
+
+
