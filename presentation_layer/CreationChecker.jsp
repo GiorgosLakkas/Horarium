@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="application_layer.*" %>
+<%@ page import="application.*" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.format.*" %>
 <%@ page import = "java.util.*"%>
