@@ -1,4 +1,4 @@
-package application_layer;
+package application;
 
 public class Manager extends User {
     private int requestsApproaved ;

@@ -1,4 +1,4 @@
-package application_layer;
+package application;
 
 public class User {
     private int id ;

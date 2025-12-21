@@ -1,4 +1,4 @@
-package application_layer;
+package application;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

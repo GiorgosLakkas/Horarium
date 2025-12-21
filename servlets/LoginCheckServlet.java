@@ -1,8 +1,10 @@
 package servlets;
 
-import application_layer.*;
 import java.io.*;
 import java.util.regex.Pattern;
+
+import application.*;
+
 import java.util.regex.Matcher;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
