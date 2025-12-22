@@ -1,5 +1,6 @@
 <%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
 <%@ page import = "application.*"%>
+<%@ page import = "java.util.*"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,8 +14,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shift Change Request | Horarium</title>
   <link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/auth.css">
-<link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <link rel="icon" type="image/png" href="images/tabicon.png" />
 </head>
 <body class="login-page">
@@ -25,10 +26,37 @@
       <p id="timeError" class="error-message" style="display:none;"></p>
 
       <form form action = "requestChecker.jsp" id="shiftChangeForm" method="post">
+
         <div class="input-group">
-          <label for="chooseDay">Choose Day (Unavailable):</label>
-          <input type="date" id="chooseDay" name="oldDay" required />
+          <label for="chooseOldShift">Choose Shift (Unavailable):</label>
+        
+          <details class="shift-dropdown">
+            <summary>Select shifts</summary>
+        
+            <div class="shift-list">
+              <%
+                ShiftDAO sdao = new ShiftDAO();
+                List<Shift> shifts = sdao.fetchRemainingWeeklyShiftsByEmployeeId(user.getId());
+        
+                for (Shift s: shifts) {
+              %>
+                <label class="shift-item">
+                  <input type="checkbox" value="<%=s.getShiftId()%>" />
+                  <span>
+                    <%= s.getDate() + " " 
+                        + s.getStartTime() + "=>"
+                        + s.getEndTime() %>
+                  </span>
+                </label>
+              <%
+                }
+              %>
+            </div>
+        
+          </details>
         </div>
+        
+        
 
         <div class="input-group">
           <label for="newDay">New Day (Available):</label>

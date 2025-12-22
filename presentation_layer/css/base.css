@@ -44,3 +44,52 @@ body {
   opacity: 0.9;
   box-shadow: 0 6px 16px rgba(0, 188, 212, 0.45);
 }
+
+.shift-dropdown {
+  width: 100%;
+  max-width: 450px;
+  border: 0px solid #cccccc;
+  border-radius: 8px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.03);
+}
+.shift-dropdown summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px;
+  list-style: none;
+}
+
+.shift-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.shift-dropdown summary::after {
+  content: "▾";
+  float: right;
+}
+
+.shift-dropdown[open] summary::after {
+  content: "▴";
+}
+
+.shift-list {
+  margin-top: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  
+}
+
+.shift-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row-reverse;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 0.85rem; 
+}
+
+
+
+
