@@ -172,4 +172,28 @@ public class ShiftDAO {
             DBConnection.closeConnection(con);
         }
     }
+    //method for retrieving a shift based on the shift_id
+    public Shift fetchShiftById(int shiftId) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT * FROM Shift WHERE shift_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,shiftId);
+            ResultSet rs =ps.executeQuery();
+            if (!rs.next()) {
+                throw new Exception("No shift exists with this id");
+            } else {
+                return new Shift(shiftId, rs.getInt("employee_id"),
+                  rs.getInt("manager_id"),
+                  rs.getInt("job_calendar_id"), 
+                  rs.getTime("start_time").toLocalTime(),
+                  rs.getTime("end_time").toLocalTime(),
+                  rs.getDate("date").toLocalDate());
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
