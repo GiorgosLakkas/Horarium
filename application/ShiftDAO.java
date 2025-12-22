@@ -13,9 +13,9 @@ public class ShiftDAO {
         String sql = "UPDATE Shift SET start_time = ? , end_time = ?, date = ? WHERE shift_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setObject(1,shift.getStartTime());
-            ps.setObject(2,shift.getEndTime());
-            ps.setObject(3,shift.getDate());
+            ps.setTime(1,java.sql.Time.valueOf(shift.getStartTime()));
+            ps.setTime(2,java.sql.Time.valueOf(shift.getEndTime()));
+            ps.setDate(3,java.sql.Date.valueOf(shift.getDate()));
             ps.setInt(4,shift.getShiftId());
             int row = ps.executeUpdate();
             if (row == 0) {
@@ -32,21 +32,18 @@ public class ShiftDAO {
     }
 
     //method for deleting non fulfilled shifts
-    public boolean removeShift(Shift shift) {
+    public void removeShift(Shift shift) throws Exception {
         Connection con = DBConnection.openConnection();
         String sql = "DELETE FROM Shift WHERE shift_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,shift.getShiftId());
             int row = ps.executeUpdate();
-            if (row > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            if (row == 0) {
+                throw new Exception("No shift was removed");
+            } 
         } catch (Exception e) {
-            e.getMessage();
-            return false;
+            throw new Exception(e.getMessage());
         } finally {
             DBConnection.closeConnection(con);
         }
@@ -65,9 +62,9 @@ public class ShiftDAO {
                 int shiftId = rs.getInt("shift_id");
                 int employeeId = rs.getInt("employee_id");
                 int jobCalendarId = rs.getInt("job_calendar_id");
-                LocalTime startTime = rs.getObject("start_time",LocalTime.class);
-                LocalTime endTime = rs.getObject("end_time",LocalTime.class);
-                LocalDate date = rs.getObject("date",LocalDate.class);
+                LocalTime startTime = rs.getTime("start_time").toLocalTime();
+                LocalTime endTime = rs.getTime("end_time").toLocalTime();
+                LocalDate date = rs.getDate("date").toLocalDate();
                 shifts.add(new Shift(shiftId, employeeId, managerId, jobCalendarId, startTime, endTime, date));
             }
             return shifts;
@@ -99,19 +96,20 @@ public class ShiftDAO {
             throw new Exception("Problem Occured!" + e.getMessage(), e);
         } finally {
             DBConnection.closeConnection(con);
-        }
+        }   
     }
-        //method for fetching all crucial data about a shift to be changed, based on an accepted shift change request
-    public Shift fetchShiftDataFromRequestByEmployeeId(LocalDate date) throws Exception {
+    //method for fetching all crucial data about a shift to be changed, based on an accepted shift change request
+    public Shift fetchShiftDataFromRequestByEmployeeId(LocalDate date, int employeeId) throws Exception {
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Shift as s,Request as r WHERE s.employee_id = r.employee_id AND s.date = ?";
+        String sql = "SELECT * FROM Shift as s,Request as r WHERE s.employee_id = r.employee_id and s.employee_id = ? AND s.date = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setDate(1,java.sql.Date.valueOf(date));
+            ps.setInt(1,employeeId);
+            ps.setDate(2,java.sql.Date.valueOf(date));
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Shift(rs.getInt("s.shift_id"),
-                rs.getInt("s.employee_id"),
+                employeeId,
                 rs.getInt("s.manager_id"),
                 rs.getInt("s.job_calendar_id"),
                 rs.getTime("s.start_time").toLocalTime(),
