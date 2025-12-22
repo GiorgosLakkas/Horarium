@@ -11,7 +11,7 @@
 <html lang="en">
 <%
   User user = (User)session.getAttribute("user");
-  if (user == null) { 
+  if (user == null || "employee".equals(UserDAO.defineUserType(user.getId()))) { 
       %><jsp:forward page="forcedLogin.jsp"/><%
   }
   
@@ -122,6 +122,8 @@
         </div>
       
         <div class="week-calendar" id="weekCalendar"></div>
+        
+
       </section>
       
     </main>
