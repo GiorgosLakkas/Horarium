@@ -53,7 +53,7 @@ public class ShiftDAO {
     public List<Shift> retrieveShifts(int managerId) {
         List<Shift> shifts = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Shift WHERE manager_id = ?";
+        String sql = "SELECT * FROM Shift as s, User as u WHERE s.employee_id =u.id and manager_id = ? ORDER BY start_time,surname";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,managerId);
