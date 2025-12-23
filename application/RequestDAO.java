@@ -310,4 +310,35 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
+    //method for inserting a request in the general Request table and returning its id for further usage
+    public int insertRequest(Request request) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "INSERT INTO Request(employee_id,manager_id,date_created,status) VALUES(?,?,?,?)";
+        String query = "SELECT max(request_id) AS last_request_id FROM Request";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,request.getEmployeeId());
+            ps.setInt(2,request.getManagerId());
+            ps.setDate(3,java.sql.Date.valueOf(request.getDate()));
+            ps.setString(4,request.getStatus().toString().toLowerCase());
+            int row = ps.executeUpdate();
+            if (row == 0) {
+                throw new Exception("Request was not inserted");
+            } else {
+                //request was successfully inserted in database
+                PreparedStatement ps2 = con.prepareStatement(query);
+                ResultSet rs = ps2.executeQuery();
+                if (rs.next()) {
+                    int max = rs.getInt("last_request_id");
+                    return max;
+                } else {
+                    throw new Exception("No maximum was inserted");
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
