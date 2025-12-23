@@ -25,7 +25,7 @@
 
       <p id="timeError" class="error-message" style="display:none;"></p>
 
-      <form form action = "requestChecker.jsp" id="shiftChangeForm" method="post">
+      <form form action = "shiftChangeFormChecker.jsp" id="shiftChangeForm" method="post">
 
         <div class="input-group">
           <label for="chooseOldShift">Choose Shift (Unavailable):</label>
