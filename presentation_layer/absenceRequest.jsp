@@ -35,7 +35,7 @@
         
 
 
-        <form action = "requestChecker.jsp" id="absenceForm" method="post">
+        <form action = "absenceFormChecker.jsp" id="absenceForm" method="post">
             
             <div class="input-group">
                 <label for="absenceType">Absence Type:</label>
