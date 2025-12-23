@@ -1,0 +1,360 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const calendarEl = document.getElementById("weekCalendar");
+  const weekRangeEl = document.getElementById("weekRange");
+
+  const employees = JSON.parse(document.getElementById("employees-data")?.textContent || "[]");
+  const shiftsByDay = JSON.parse(document.getElementById("shifts-data")?.textContent || "{}");
+  const calendarId = (document.getElementById("calendar-id")?.textContent || "-1").trim();
+
+  const employeeSelect = document.getElementById("employeeSelect");
+  const daySelect = document.getElementById("daySelect");
+  const startTimeInput = document.getElementById("startTime");
+  const endTimeInput = document.getElementById("endTime");
+  const addShiftBtn = document.getElementById("addShiftBtn");
+  const removeShiftSelect = document.getElementById("removeShiftSelect");
+  const removeShiftBtn = document.getElementById("removeShiftBtn");
+  const submitBtn = document.getElementById("submitChanges");
+  const saveStatus = document.getElementById("saveStatus");
+  const prevWeekBtn = document.getElementById("prevWeek");
+  const nextWeekBtn = document.getElementById("nextWeek");
+
+  const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+  // ----- State (what we see on screen & what we will submit) -----
+  let state = {
+    weekMonday: mondayOf(new Date()),
+    shifts: [],       // flat list
+    deletedIds: [],   // shiftId list
+    nextLocalId: 1
+  };
+
+  // populate employee dropdown
+  employees.forEach(e => {
+    const opt = document.createElement("option");
+    opt.value = String(e.id);
+    opt.textContent = e.name;
+    employeeSelect?.appendChild(opt);
+  });
+
+  // init from server JSON
+  DAYS.forEach(day => {
+    const list = Array.isArray(shiftsByDay[day]) ? shiftsByDay[day] : [];
+    list.forEach(s => {
+      const normalized = {
+        localId: state.nextLocalId++,
+        shiftId: String(s.shiftId || ""),
+        employeeId: String(s.employeeId || ""),
+        employee: String(s.employee || ""),
+        start: normalizeTime(s.start),
+        end: normalizeTime(s.end),
+        date: String(s.date || ""),
+        day
+      };
+      if (!normalized.date) {
+        // fallback: compute date from current week
+        normalized.date = formatISO(addDays(state.weekMonday, DAYS.indexOf(day)));
+      }
+      state.shifts.push(normalized);
+    });
+  });
+
+  // if we have any dates from the server, align weekMonday to that calendar week
+  const mondayFromData = guessWeekMondayFromData(state.shifts);
+  if (mondayFromData) state.weekMonday = mondayFromData;
+
+  render();
+
+  // keep "remove" dropdown in sync with selected day
+  daySelect?.addEventListener("change", () => {
+    refreshRemoveDropdown();
+  });
+
+  // ----- Add shift (local only) -----
+  addShiftBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const day = (daySelect?.value || "").trim();
+    const employeeId = (employeeSelect?.value || "").trim();
+    const employeeName = employeeSelect?.options[employeeSelect.selectedIndex]?.textContent || "";
+    const start = (startTimeInput?.value || "").trim();
+    const end = (endTimeInput?.value || "").trim();
+
+    if (!day || !employeeId || !start || !end) {
+      flashStatus("Please fill all fields.", true);
+      return;
+    }
+
+    const date = formatISO(addDays(state.weekMonday, DAYS.indexOf(day)));
+
+    state.shifts.push({
+      localId: state.nextLocalId++,
+      shiftId: "", // new
+      employeeId,
+      employee: employeeName,
+      start,
+      end,
+      date,
+      day
+    });
+
+    flashStatus("Shift added (not saved yet).", false);
+    render();
+  });
+
+  // ----- Remove shift (ONLY from the side panel) -----
+  removeShiftBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const val = (removeShiftSelect?.value || "").trim();
+    if (!val) {
+      flashStatus("Select a shift to remove.", true);
+      return;
+    }
+
+    const target = findShiftByKey(val);
+    if (!target) {
+      flashStatus("Shift not found.", true);
+      return;
+    }
+
+    removeShift(target);
+  });
+
+  // ----- Submit to DB -----
+  submitBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    if (calendarId === "-1") {
+      flashStatus("No active calendar to edit.", true);
+      return;
+    }
+
+    try {
+      submitBtn.disabled = true;
+      flashStatus("Saving...", false);
+
+      const payloadShifts = state.shifts.map(s => ({
+        shiftId: s.shiftId,
+        employeeId: s.employeeId,
+        start: s.start,
+        end: s.end,
+        date: s.date
+      }));
+
+      const form = new URLSearchParams();
+      form.set("calendarId", calendarId);
+      form.set("shiftsData", JSON.stringify(payloadShifts));
+      form.set("deletedIds", JSON.stringify(state.deletedIds));
+
+      const res = await fetch("EditCalendarChecker.jsp", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: form.toString()
+      });
+
+      const text = await res.text();
+      if (!res.ok || text.trim() !== "OK") throw new Error(text || "Save failed");
+
+      state.deletedIds = [];
+      flashStatus("Saved to database...", false);
+    } catch (err) {
+      flashStatus("Error: " + (err?.message || err), true);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // ----- Week navigation (UI only for now) -----
+  prevWeekBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    state.weekMonday = addDays(state.weekMonday, -7);
+    render();
+  });
+
+  nextWeekBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    state.weekMonday = addDays(state.weekMonday, 7);
+    render();
+  });
+
+  // ----- Rendering (same DOM/classes as weeklyCalendar.js) -----
+  function render() {
+    if (!calendarEl) return;
+    calendarEl.innerHTML = "";
+
+    // Week range header (same style as dashboard)
+    const start = state.weekMonday;
+    const end = addDays(start, 6);
+    if (weekRangeEl) {
+      weekRangeEl.textContent = `${formatHuman(start)} - ${formatHuman(end)}`;
+    }
+
+    const hasCalendar = state.shifts.length > 0;
+    if (!hasCalendar) {
+      calendarEl.innerHTML = '<div class="no-calendar">No calendar created yet.</div>';
+      return;
+    }
+
+    DAYS.forEach((dayName, idx) => {
+      const col = document.createElement("div");
+      col.className = "day-column";
+
+      const header = document.createElement("div");
+      header.className = "day-header";
+      header.textContent = dayName;
+      col.appendChild(header);
+
+      const dayDate = addDays(state.weekMonday, idx);
+      const dayIso = formatISO(dayDate);
+
+      const dayShifts = state.shifts
+        .filter(s => (s.day === dayName) || (s.date === dayIso))
+        .sort((a, b) => (a.start || "").localeCompare(b.start || ""));
+
+      if (dayShifts.length === 0) {
+        const placeholder = document.createElement("div");
+        placeholder.className = "shift-slot off";
+        placeholder.textContent = "Day Off";
+        col.appendChild(placeholder);
+      } else {
+        dayShifts.forEach(shift => {
+          const slot = document.createElement("div");
+          slot.className = "shift-slot filled";
+
+          // Use simple hyphen to avoid encoding issues
+          const timeText = `${shift.start} - ${shift.end}`;
+          // NOTE: Î´ÎµÎ½ Î²Î¬Î¶Î¿Ï…Î¼Îµ click/remove Ï€Î¬Î½Ï‰ ÏƒÏ„Î¿ card.
+          // ÎŒÎ»Î± Ï„Î± Add/Remove Î³Î¯Î½Î¿Î½Ï„Î±Î¹ Î±Ï€ÏŒ Ï„Î¿ Î´ÎµÎ¾Î¯ panel.
+          slot.innerHTML = `
+            <div class="shift-time">${escapeHtml(timeText)}</div>
+            <div class="shift-employee">${escapeHtml(shift.employee || "")}</div>
+          `;
+
+          col.appendChild(slot);
+        });
+      }
+
+      calendarEl.appendChild(col);
+    });
+
+    // update remove dropdown after every render
+    refreshRemoveDropdown();
+  }
+
+  function removeShift(shift) {
+    if (shift.shiftId) state.deletedIds.push(String(shift.shiftId));
+    state.shifts = state.shifts.filter(s => s !== shift);
+    flashStatus("Shift removed (not saved yet).", false);
+    render();
+  }
+
+  function refreshRemoveDropdown() {
+    if (!removeShiftSelect) return;
+    const selectedDay = (daySelect?.value || "").trim();
+
+    // keep current selection (if possible)
+    const prev = removeShiftSelect.value;
+
+    // reset
+    removeShiftSelect.innerHTML = '<option value="">-- Select Shift --</option>';
+
+    if (!selectedDay) return;
+
+    const dayIdx = DAYS.indexOf(selectedDay);
+    const dayIso = dayIdx >= 0 ? formatISO(addDays(state.weekMonday, dayIdx)) : "";
+
+    const dayShifts = state.shifts
+      .filter(s => (s.day === selectedDay) || (dayIso && s.date === dayIso))
+      .sort((a, b) => (a.start || "").localeCompare(b.start || ""));
+
+    dayShifts.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = shiftKey(s);
+      opt.textContent = `${s.start} - ${s.end}  |  ${s.employee}`;
+      removeShiftSelect.appendChild(opt);
+    });
+
+    // restore selection if still exists
+    if (prev) {
+      const exists = Array.from(removeShiftSelect.options).some(o => o.value === prev);
+      if (exists) removeShiftSelect.value = prev;
+    }
+  }
+
+  function shiftKey(shift) {
+    // prefer DB id, otherwise local id
+    if (shift.shiftId) return `id:${shift.shiftId}`;
+    return `local:${shift.localId}`;
+  }
+
+  function findShiftByKey(key) {
+    if (key.startsWith("id:")) {
+      const id = key.substring(3);
+      return state.shifts.find(s => String(s.shiftId) === id) || null;
+    }
+    if (key.startsWith("local:")) {
+      const lid = Number(key.substring(6));
+      return state.shifts.find(s => Number(s.localId) === lid) || null;
+    }
+    return null;
+  }
+
+  // ----- Helpers -----
+  function mondayOf(d) {
+    const date = new Date(d);
+    const day = date.getDay() || 7; // 1..7
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - day + 1);
+    return date;
+  }
+
+  function addDays(dateObj, days) {
+    const d = new Date(dateObj);
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+
+  function formatISO(dateObj) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function formatHuman(dateObj) {
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const y = dateObj.getFullYear();
+    return `${d}/${m}/${y}`;
+  }
+
+  function normalizeTime(t) {
+    if (!t) return "";
+    return String(t).substring(0, 5); // HH:mm
+  }
+
+  function guessWeekMondayFromData(flatShifts) {
+    for (const s of flatShifts) {
+      if (s?.date) {
+        const d = new Date(s.date + "T00:00:00");
+        return mondayOf(d);
+      }
+    }
+    return null;
+  }
+
+  function flashStatus(msg, isError) {
+    if (!saveStatus) return;
+    saveStatus.textContent = msg;
+    saveStatus.style.color = isError ? "#ffb4b4" : "";
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
+  }
+});

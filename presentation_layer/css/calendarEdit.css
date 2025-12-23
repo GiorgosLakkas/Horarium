@@ -1,0 +1,76 @@
+/* Only the right-side edit panel layout + remove button styling.
+   Everything else comes from the dashboard + calendarNikou.css */
+
+   .edit-layout{
+    display:flex;
+    gap: 34px;
+    align-items:flex-start;
+  }
+  
+  .edit-calendar{ flex: 1; min-width: 0; }
+  
+  .edit-actions{
+    margin-top: 18px;
+    display:flex;
+    align-items:center;
+    gap: 16px;
+  }
+  
+  .save-status{ font-weight: 700; opacity: 0.9; }
+  
+  .edit-panel{
+    width: 420px;
+    max-width: 100%;
+    background-color: #1a2332;
+    padding: 34px 28px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  
+  .panel-title{
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 26px;
+  }
+  
+  .panel-form{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  
+  .panel-form label{ font-weight: 800; opacity: 0.95; }
+  
+  .panel-form select,
+  .panel-form input{
+    width:100%;
+    padding: 12px;
+    background: #0f1724;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 10px;
+  }
+  
+  .two-col{ display:flex; gap: 12px; }
+  .two-col > div{ flex:1; }
+  
+  .panel-hint{ font-size: 12px; opacity: 0.8; margin-top: 6px; }
+  
+  /* Separator inside the panel */
+  .panel-sep{
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    margin: 8px 0;
+  }
+  
+  /* Danger button variant for panel */
+  .btn.btn-danger{
+    background: #c55d5d;
+    box-shadow: none;
+  }
+  
+  @media (max-width: 1200px){
+    .edit-layout{ flex-direction: column; }
+    .edit-panel{ width: 100%; }
+  }
