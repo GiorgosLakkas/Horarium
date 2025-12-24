@@ -300,7 +300,7 @@ public class RequestDAO {
             ps.setInt(1,requestId);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
-                return null;
+                throw new Exception("No accepted absence request with this id");
             } else {
                 return new AbsenceDTO(employee_id, rs.getDate("start_date").toLocalDate(),rs.getDate("end_date").toLocalDate(),rs.getInt("days_off"));
             }
