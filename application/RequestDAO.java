@@ -291,8 +291,8 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
-    //method for retrieving startDate, endDate and days off for an accepted absence request 
-    public AbsenceDTO fetchAcceptedAbsenceCrucialDetails(int requestId) throws Exception {
+    //method for retrieving startDate, endDate and days off for an accepted absence request, needed the employee id for proper mapping
+    public AbsenceDTO fetchAcceptedAbsenceCrucialDetails(int requestId, int employee_id) throws Exception {
         Connection con = DBConnection.openConnection();
         String sql = "SELECT start_date,end_date,days_off FROM AbsenceRequest AS a, Days_Off AS d WHERE a.request_id = d.request_id AND a.request_id = ?";
         try {
@@ -300,9 +300,9 @@ public class RequestDAO {
             ps.setInt(1,requestId);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
-                throw new Exception("No accepted absence request with this id");
+                return null;
             } else {
-                return new AbsenceDTO(rs.getDate("start_date").toLocalDate(),rs.getDate("end_date").toLocalDate(),rs.getInt("days_off"));
+                return new AbsenceDTO(employee_id, rs.getDate("start_date").toLocalDate(),rs.getDate("end_date").toLocalDate(),rs.getInt("days_off"));
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());

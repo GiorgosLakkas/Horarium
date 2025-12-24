@@ -4,12 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const calendarGrid = document.getElementById("calendarGrid");
     const prevBtn = document.getElementById("prevMonth");
     const nextBtn = document.getElementById("nextMonth");
+    // -----------------------------
+// Accepted absences (from JSP)
+// -----------------------------
+    const acceptedAbsences = JSON.parse(
+        document.getElementById("absences-data").textContent
+    );
+  
 
     let currentDate = new Date();
     const today = new Date();
     const realWeekStart = new Date(today);
     realWeekStart.setDate(today.getDate() - today.getDay()); // Monday=0 if adjusted
-    
+    //realWeekStart.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+
 
     // RENDER WEEKLY CALENDAR
     function renderCalendar() {
@@ -53,16 +61,54 @@ document.addEventListener("DOMContentLoaded", () => {
             // On click set selected day
             dayCell.addEventListener("click", () => {
                 currentDayName = dayName;
-    
+            
                 document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
                 dayCell.classList.add("selected");
-    
+        
+            
                 renderShifts(dayName);
             });
+            
     
             calendarGrid.appendChild(dayCell);
         }
     }
+
+    function updateEmployeeAvailabilityForDate(selectedDate) {
+        const checkboxes = document.querySelectorAll(
+            "#employeeAddDropdown input[type='checkbox']"
+        );
+    
+        checkboxes.forEach(cb => {
+            const employeeId = parseInt(cb.dataset.id, 10);
+            const label = cb.parentElement;
+    
+            const unavailable = acceptedAbsences.some(a => {
+                if (a.employee_id !== employeeId) return false;
+    
+                const start = new Date(a.startDate);
+                const end = new Date(a.endDate);
+    
+                // Normalize times
+                start.setHours(0, 0, 0, 0);
+                end.setHours(23, 59, 59, 999);
+    
+                return selectedDate >= start && selectedDate <= end;
+            });
+    
+            cb.disabled = unavailable;
+    
+            if (unavailable) {
+                label.classList.add("unavailable");
+                label.title = "Unavailable (approved absence)";
+                cb.checked = false; // safety
+            } else {
+                label.classList.remove("unavailable");
+                label.title = "";
+            }
+        });
+    }
+    
     
     document.getElementById("clearShiftsBtn").addEventListener("click", () => {
         if (!confirm("Are you sure you want to delete ALL shifts?")) return;
@@ -277,6 +323,36 @@ const employeeCheckboxes = document.querySelectorAll("#employeeAddDropdown input
 // Current day clicked on the calendar
 let currentDayName = null;
 
+
+// When day is selected from the dropdown
+daySelect.addEventListener("change", () => {
+    const selectedDayName = daySelect.value;
+    if (!selectedDayName) return;
+
+    currentDayName = selectedDayName;
+
+    // Compute the exact date of the selected day in the current week
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const date = currentDate.getDate();
+
+    const dayOfWeek = currentDate.getDay(); // 0=Sunday
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const startOfWeek = new Date(year, month, date + diffToMonday);
+
+    const weekdayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const dayIndex = weekdayNames.indexOf(selectedDayName);
+    if (dayIndex === -1) return;
+
+    const selectedDate = new Date(startOfWeek);
+    selectedDate.setDate(startOfWeek.getDate() + dayIndex);
+
+    // Update employee availability for this day
+    updateEmployeeAvailabilityForDate(selectedDate);
+
+});
+
+
 // Add shift button
 addShiftBtn.addEventListener("click", () => {
     const day = daySelect.value;
@@ -312,8 +388,7 @@ addShiftBtn.addEventListener("click", () => {
             endTime
         };
 
-        // -------------------------------
-        // 🔥 DUPLICATE CHECK
+        // ------------------------------
         // -------------------------------
         const alreadyExists = scheduleData[day].some(s =>
             s.employee === newShift.employee &&

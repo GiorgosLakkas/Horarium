@@ -2,7 +2,8 @@
 <%@ page isELIgnored="true" %>
 <%@ page import = "application.*"%>
 <%@ page import = "java.util.*"%>
-
+<%@ page import = "java.util.stream.Collectors"%>
+<%@ page import="com.google.gson.Gson" %>
 
 
 <!DOCTYPE html>
@@ -30,12 +31,12 @@
 
 
   <div class="container">
-    <!-- LEFT SIDE — CALENDAR -->
+
     <div class="calendar-side">
       <div class="calendar-card" style="width: 100%; max-width: 800px; min-height: 420px;">
         <div class="main">
 
-          <!-- Header with Month + Navigation -->
+
           <div class="header">
             <div class="month-title" id="monthTitle">Month Year</div>
 
@@ -45,7 +46,6 @@
             </div>
           </div>
 
-          <!-- Calendar Grid -->
           <div id="calendarGrid" class="calendar-grid"></div>
 
         </div>
@@ -86,12 +86,11 @@
 
     </div>
 
-    <!-- RIGHT SIDE — MANAGER CONTROLS -->
     <form action = "CreationChecker.jsp" method="post" class="Vrexei">
     <div class="form-side">
       <h2>Create Shift</h2>
 
-      <!-- Day Selection -->
+
       <label for="daySelect">Select Day of Week:</label>
       <select id="daySelect">
         <option value="">-- Select Day --</option>
@@ -104,8 +103,7 @@
         <option>Sunday</option>
       </select>
 
-    
-    <!-- Time Selection -->
+
       <div class="time-container">
         <input type="text" id="timeInput" placeholder="Select time" readonly>
         <button type="button" id="clearTime">Clear</button>
@@ -145,16 +143,36 @@
     
 <%
 UserDAO ud = new UserDAO();
+RequestDAO rd = new RequestDAO();
 List<Employee> employees = new ArrayList<>();
-employees = ud.fetchEmployeesByManagerId(user.getId());%>
-      <!-- ADD EMPLOYEES -->
+List<AbsenceRequest> arequests = new ArrayList<>();
+
+employees = ud.fetchEmployeesByManagerId(user.getId());
+arequests = rd.retrieveManagerAbsenceRequests(user.getId());
+
+//Only the accepted requests
+arequests = arequests.stream()
+                     .filter(r -> r.getStatus() == Request.Status.ACCEPTED)
+                     .collect(Collectors.toList());
+
+List<AbsenceDTO> absenceDTOs = new ArrayList<>();
+//Creates the data transfer object for all the accepted requests
+for (AbsenceRequest r : arequests) {
+    AbsenceDTO adto = rd.fetchAcceptedAbsenceCrucialDetails(r.getRequestId(), r.getEmployeeId());
+    if (adto != null) {
+      absenceDTOs.add(adto);
+    }
+}
+
+String absencesJson = new Gson().toJson(absenceDTOs);
+%>
+
       <label>Select Employees to Add:</label>
       <div class="custom-select" id="employeeAddDropdown">
         <div class="select-display placeholder">-- Select Employees --</div>
         <div class="options">
-    <!--<label><input type="checkbox" value="John Doe" /> John Doe</label>
-        <label><input type="checkbox" value="Alex Johnson" /> Alex Johnson</label> -->
-<% for (Employee e: employees){
+
+<% for (Employee e: employees){  
 %>  
     <label><input type="checkbox" value="<%= e.getSurname() %>" data-id ="<%= e.getId() %>" /><%= ud.getEmployeeNameDetailsById(e.getId()) %></label>        
 <%
@@ -189,6 +207,9 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
 
 
 
+  <script id="absences-data" type="application/json">
+    <%= absencesJson %>
+  </script>
   <script src="js/CreateCalendar.js" defer></script>
   <script>
     let shiftList = [];
@@ -286,7 +307,6 @@ employees = ud.fetchEmployeesByManagerId(user.getId());%>
   
       document.getElementById("shiftsData").value = JSON.stringify(shiftList);
       document.getElementById("dateSubmitted").value = currentDate.toISOString().split('T')[0];
-
 
   
       document.querySelector(".Vrexei").submit();
