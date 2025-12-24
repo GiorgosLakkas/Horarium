@@ -148,13 +148,16 @@
                 <span class="stat-label">Assigned managers</span>
                 <span class="stat-value" id="assignedManagers"><%=usrD.getManagerNameDetailsById(emp.getManagerId())%></span>
               </div>
-
+              <% JobCalendarDAO jd = new JobCalendarDAO();
+                JobCalendar jobCalendar= jd.fetchCurrentJobCalendar(LocalDate.now());
+                ShiftDAO sd = new ShiftDAO();
+                List<Shift> weeklyShifts = new ArrayList<>();
+                weeklyShifts = sd.fetchAllWeeklyShiftsByEmployeeId(jobCalendar,user.getId());
+              %>
               <div class="stat-card span-2">
-                <span class="stat-label">Shifts next 7 days</span>
-                <span class="stat-value" id="shift7">--</span>
+                <span class="stat-label">Shifts this week</span>
+                <span class="stat-value" id="shift7"><%=weeklyShifts.size()%></span>
               </div>
-
-
               <!-- NEW Leave Info -->
               <div class="stat-card span-2">
                 <span class="stat-label">Leave days</span>
