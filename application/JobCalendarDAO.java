@@ -42,6 +42,7 @@ public class JobCalendarDAO {
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setDate(1,java.sql.Date.valueOf(currentDate));
+            ps.setDate(2,java.sql.Date.valueOf(currentDate));
             ResultSet rs = ps.executeQuery();
             //we suppose that it returns a single calendar for these specific dates 
             if (rs.next()) {
@@ -59,7 +60,6 @@ public class JobCalendarDAO {
             DBConnection.closeConnection(con);
         }
     } 
-
         public JobCalendar getCurrentJobCalendar(LocalDate date, int managerId) throws Exception {
         String sql = "SELECT * FROM job_calendar " +
                      "WHERE starting_date <= ? AND ending_date >= ? AND manager_id = ? " +
