@@ -196,4 +196,20 @@ public class ShiftDAO {
             DBConnection.closeConnection(con);
         }
     }
+    //method for removing a list of shifts => utilized in edit 
+    public void removeShiftsInEdit(List<Shift> shifts) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "DELETE FROM Shift WHERE shift_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            for (Shift s : shifts) {
+                ps.setInt(1,s.getShiftId());
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
