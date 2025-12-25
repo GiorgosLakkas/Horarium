@@ -152,11 +152,13 @@
                 JobCalendar jobCalendar= jd.getCurrentJobCalendar(LocalDate.now(),emp.getManagerId());
                 ShiftDAO sd = new ShiftDAO();
                 List<Shift> weeklyShifts = new ArrayList<>();
-                weeklyShifts = sd.fetchAllWeeklyShiftsByEmployeeId(jobCalendar,user.getId());
+                if (jobCalendar != null) {
+                  weeklyShifts = sd.fetchAllWeeklyShiftsByEmployeeId(jobCalendar,user.getId());
+                }
               %>
               <div class="stat-card span-2">
                 <span class="stat-label">Shifts this week</span>
-                <span class="stat-value" id="shift7"><%=weeklyShifts.size()%></span>
+                <span class="stat-value" id="shift7"><%=(jobCalendar == null) ? "-" : weeklyShifts.size()%></span>
               </div>
               <!-- NEW Leave Info -->
               <div class="stat-card span-2">
