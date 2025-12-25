@@ -11,7 +11,18 @@ LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
 RequestDAO rd = new RequestDAO();
 UserDAO ud = new UserDAO();
+//calculate the time interaval of absence in days
+int requestedAbsenceDays = AbsenceRequest.countWeekdays(startDate,endDate);
 Employee employee = ud.fetchEmployeeDetails(user);
+if (requestedAbsenceDays > employee.getDaysOffRemaining() && employee.getDaysOffRemaining() > 0) {
+    request.setAttribute("flag", "Requested absence days surpass your remaining days off! You have " + employee.getDaysOffRemaining() + " days off remaining"); %>
+    <jsp:forward page = "absenceRequest.jsp"/>
+<%  return;
+} else if (employee.getDaysOffRemaining() == 0) {
+    request.setAttribute("flag", "You have no remaining days off!"); %>
+    <jsp:forward page = "absenceRequest.jsp"/>
+<%  return;
+}
 Request req = new Request(user.getId(),employee.getManagerId(),LocalDate.now(),Request.Status.PENDING);
 try {
     int lastInsertedRequestId = rd.insertRequest(req);

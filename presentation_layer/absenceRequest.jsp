@@ -32,6 +32,9 @@
 
         <!-- Error message shown by JavaScript -->
         <p id="dateError" class="error-message" style="display:none;"></p>
+        <% if (request.getAttribute("flag") != null) { %>
+            <div class="alert alert-danger text-center" role="alert"><span><%=(String)request.getAttribute("flag") %></span></div>
+        <% }  %>
         
 
 
