@@ -120,7 +120,7 @@
 
                 <div class="stat-card span-2">
                   <span class="stat-label">Status</span>
-                  <span class="stat-value <%= (Request.Status.REJECTED == req.getStatus()) ? "negative" : "" %>">
+                  <span class="stat-value <%= (Request.Status.REJECTED == req.getStatus()) ? "negative" : ((Request.Status.ACCEPTED == req.getStatus()) ? "positive" : "") %>">
                     <%= req.getStatus() %>
                   </span>
                 </div>

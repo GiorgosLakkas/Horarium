@@ -202,6 +202,11 @@
   color:#f97373;
 }
 
+.stat-value.positive {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
 .stat-inline{
   display:flex;
   align-items:center;
