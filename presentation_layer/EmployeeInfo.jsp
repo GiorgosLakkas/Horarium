@@ -149,7 +149,7 @@
                 <span class="stat-value" id="assignedManagers"><%=usrD.getManagerNameDetailsById(emp.getManagerId())%></span>
               </div>
               <% JobCalendarDAO jd = new JobCalendarDAO();
-                JobCalendar jobCalendar= jd.fetchCurrentJobCalendar(LocalDate.now());
+                JobCalendar jobCalendar= jd.getCurrentJobCalendar(LocalDate.now(),emp.getManagerId());
                 ShiftDAO sd = new ShiftDAO();
                 List<Shift> weeklyShifts = new ArrayList<>();
                 weeklyShifts = sd.fetchAllWeeklyShiftsByEmployeeId(jobCalendar,user.getId());
