@@ -133,7 +133,7 @@
 
           <%UserDAO usrD = new UserDAO();
             Employee emp = usrD.fetchEmployeeDetails(user);
-            int usedDays = 40 - emp.getDaysOffRemaining();
+            int usedDays = 100 - emp.getDaysOffRemaining();
           %>
 
           <!-- SECTION 2: WORKLOAD & LEAVE -->
@@ -166,7 +166,7 @@
                 <div class="leave-summary">
                   <span>Remaining: <span class="stat-value" id="remDays"><%= emp.getDaysOffRemaining() %></span></span>
                   <span>Used: <span class="stat-value" id="usedDays"><%= usedDays%></span></span>
-                  <span>Total: <span class="stat-value" id="totalDays">40</span></span>
+                  <span>Total: <span class="stat-value" id="totalDays">100</span></span>
                 </div>
               </div>
 
