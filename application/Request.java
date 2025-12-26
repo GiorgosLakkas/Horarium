@@ -21,6 +21,12 @@ public class Request {
         this.date = date;
         this.status = status;
     }
+    public Request(int employeeId,int managerId, LocalDate date, Status status) {
+        this.employeeId = employeeId;
+        this.managerId = managerId;
+        this.date = date;
+        this.status = status;
+    }
 
     public int getRequestId() {return this.requestId;}
     public void setRequestId(int requestId) {this.requestId = requestId;}
