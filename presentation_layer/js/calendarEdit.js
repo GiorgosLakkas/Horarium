@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       day
     });
 
-    flashStatus("Shift added (not saved yet).", false);
+    flashStatus("Shift added ", false);
     render();
   });
 
@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
     removeShift(target);
   });
 
-  // ----- Submit to DB -----
   submitBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -152,12 +151,19 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const text = await res.text();
-      if (!res.ok || text.trim() !== "OK") throw new Error(text || "Save failed");
 
-      state.deletedIds = [];
-      flashStatus("Saved to database...", false);
+      // FIXED: Use includes() to avoid error on hidden characters/newlines
+      if (res.ok) {
+        state.deletedIds = [];
+        //flashStatus("Saved to database", false); // Success (Not red)
+        window.location.href = "managerDashboard.jsp";
+      } else {
+        // If it's not the success message, treat it as an error
+        throw new Error(text || "Save failed");
+      }
+
     } catch (err) {
-      flashStatus("Error: " + (err?.message || err), true);
+      flashStatus((err?.message || err), true);
     } finally {
       submitBtn.disabled = false;
     }
@@ -222,8 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Use simple hyphen to avoid encoding issues
           const timeText = `${shift.start} - ${shift.end}`;
-          // NOTE: Î´ÎµÎ½ Î²Î¬Î¶Î¿Ï…Î¼Îµ click/remove Ï€Î¬Î½Ï‰ ÏƒÏ„Î¿ card.
-          // ÎŒÎ»Î± Ï„Î± Add/Remove Î³Î¯Î½Î¿Î½Ï„Î±Î¹ Î±Ï€ÏŒ Ï„Î¿ Î´ÎµÎ¾Î¯ panel.
           slot.innerHTML = `
             <div class="shift-time">${escapeHtml(timeText)}</div>
             <div class="shift-employee">${escapeHtml(shift.employee || "")}</div>
@@ -243,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function removeShift(shift) {
     if (shift.shiftId) state.deletedIds.push(String(shift.shiftId));
     state.shifts = state.shifts.filter(s => s !== shift);
-    flashStatus("Shift removed (not saved yet).", false);
+    flashStatus("Shift removed.", false);
     render();
   }
 

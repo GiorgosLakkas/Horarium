@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ShiftEditDTO {
-    // Keep these as String for JSON compatibility (as your comments requested)
+    // Keep these as String for JSON compatibility 
     private String shiftId;     // "" or null means "new shift"
     private String employeeId;  // required
     private String start;       // "HH:mm"
@@ -47,6 +47,6 @@ public class ShiftEditDTO {
     }
 
     public boolean isNew() {
-        return shiftId == null || shiftId.trim().isEmpty() || shiftId.trim().equals("0");
+        return shiftId == null || shiftId.trim().isEmpty();
     }
 }
