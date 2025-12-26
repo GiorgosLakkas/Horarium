@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="application.*" %>
 <%@ page import="com.google.gson.Gson" %>
+<%@ page import = "java.util.stream.Collectors"%>
 <%@ page import="java.util.*" %>
 <%@ page import="java.time.*" %>
 
@@ -96,17 +97,17 @@
 
 <body style="display:block; padding:40px; background-color:var(--bg); color:var(--text);">
 
-<div style="margin-bottom: 30px;">
+  <div style="margin-bottom: 30px;">
     <a href="managerDashboard.jsp">
       <img src="images/logo.png" alt="Company Logo" style="width: 85px; height: auto;">
     </a>
   </div>
-  <%
+<%
   Shift flag = (Shift)session.getAttribute("flag");
   if (flag != null) {
     out.println("Replace employee : " + udao.getEmployeeNameDetailsById(flag.getEmployeeId()) + " from : " + flag.getDate());
   } 
-  %>
+%>
 
   <div style="display:flex; gap:40px; align-items:flex-start;">
 
@@ -114,10 +115,6 @@
     <section style="flex: 2;">
       <div class="calendar-header" style="justify-content: space-between;">
         <h2 id="weekRange" style="margin:0;"></h2>
-        <div class="nav">
-          <button class="week-btn" id="prevWeek">&lt;</button>
-          <button class="week-btn" id="nextWeek">&gt;</button>
-        </div>
       </div>
 
       <div class="week-calendar" id="weekCalendar"></div>
@@ -158,6 +155,31 @@
               <input id="endTime" type="time" placeholder="HH:MM" ="width:100%; padding:12px; background:#0f1724; color:white; border:1px solid #334155; border-radius:10px;">
             </div>
           </div>
+<%
+UserDAO ud = new UserDAO();
+RequestDAO rd = new RequestDAO();
+List<Employee> employees2 = new ArrayList<>();
+List<AbsenceRequest> arequests = new ArrayList<>();
+
+employees2 = ud.fetchEmployeesByManagerId(user.getId());
+arequests = rd.retrieveManagerAbsenceRequests(user.getId());
+
+//Only the accepted requests
+arequests = arequests.stream()
+                     .filter(r -> r.getStatus() == Request.Status.ACCEPTED)
+                     .collect(Collectors.toList());
+
+List<AbsenceDTO> absenceDTOs = new ArrayList<>();
+//Creates the data transfer object for all the accepted requests
+for (AbsenceRequest r : arequests) {
+    AbsenceDTO adto = rd.fetchAcceptedAbsenceCrucialDetails(r.getRequestId(), r.getEmployeeId());
+    if (adto != null) {
+      absenceDTOs.add(adto);
+    }
+}
+
+String absencesJson = new Gson().toJson(absenceDTOs);
+%>
 
           <div>
             <label style="display:block; margin-bottom:6px; font-weight:600;">Employee</label>
@@ -181,8 +203,10 @@
     </aside>
 
   </div>
-
-  <!-- server data -->
+  
+  <script id="absences-data" type="application/json">
+    <%= absencesJson %>
+  </script>
   <script id="shifts-data" type="application/json"><%= jsonCalendar %></script>
   <script id="employees-data" type="application/json"><%= jsonEmployees %></script>
   <script id="calendar-id" type="text/plain"><%= calendar_id %></script>

@@ -3,8 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const weekRangeEl = document.getElementById("weekRange");
 
   const employees = JSON.parse(document.getElementById("employees-data")?.textContent || "[]");
+
+
+  
   const shiftsByDay = JSON.parse(document.getElementById("shifts-data")?.textContent || "{}");
   const calendarId = (document.getElementById("calendar-id")?.textContent || "-1").trim();
+  const absences = JSON.parse(
+    document.getElementById("absences-data")?.textContent || "[]"
+  );
+
+  
 
   const employeeSelect = document.getElementById("employeeSelect");
   const daySelect = document.getElementById("daySelect");
@@ -15,10 +23,82 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeShiftBtn = document.getElementById("removeShiftBtn");
   const submitBtn = document.getElementById("submitChanges");
   const saveStatus = document.getElementById("saveStatus");
-  const prevWeekBtn = document.getElementById("prevWeek");
-  const nextWeekBtn = document.getElementById("nextWeek");
+
+  const todayISO = formatISO(new Date());
+
 
   const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+
+  function isPastDate(isoDate) {
+    return isoDate < todayISO;
+  }
+
+  function getIsoDateForDay(day) {
+    const idx = DAYS.indexOf(day);
+    if (idx < 0) return null;
+    return formatISO(addDays(state.weekMonday, idx));
+  }
+  
+  
+  function isEmployeeAbsent(employeeId, isoDate) {
+    return absences.some(a =>
+      String(a.employee_id) === String(employeeId) &&
+      isoDate >= a.startDate &&
+      isoDate <= a.endDate
+    );
+  }
+
+  function updateEmployeeAvailabilityForDate(isoDate) {
+    if (!employeeSelect || !isoDate) return;
+  
+    Array.from(employeeSelect.options).forEach(opt => {
+      if (!opt.value) return; // "-- Select Employee --"
+  
+      const absent = isEmployeeAbsent(opt.value, isoDate);
+      opt.disabled = absent;
+  
+      // optional UX hint
+      const baseName = opt.textContent.replace(" (Absent)", "");
+      opt.textContent = absent ? `${baseName} (Absent)` : baseName;
+      
+    });
+    // reset selection if currently absent
+    if (
+      employeeSelect.value &&
+      isEmployeeAbsent(employeeSelect.value, isoDate)
+    ) {
+      employeeSelect.value = "";
+    }
+  }
+
+  function updateDayDropdownAvailability() {
+    if (!daySelect) return;
+  
+    const todayISO = formatISO(new Date());
+  
+    Array.from(daySelect.options).forEach(opt => {
+      if (!opt.value) return; // "-- Select Day --"
+  
+      const isoDate = getIsoDateForDay(opt.value);
+      if (!isoDate) return;
+  
+      const isPast = isoDate < todayISO;
+  
+      opt.disabled = isPast;
+  
+      // clean label
+    });
+  
+    // reset selection if user had picked a past day
+    if (daySelect.value) {
+      const iso = getIsoDateForDay(daySelect.value);
+      if (iso && iso < todayISO) {
+        daySelect.value = "";
+      }
+    }
+  }
+  
 
   // ----- State (what we see on screen & what we will submit) -----
   let state = {
@@ -61,14 +141,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // if we have any dates from the server, align weekMonday to that calendar week
   const mondayFromData = guessWeekMondayFromData(state.shifts);
   if (mondayFromData) state.weekMonday = mondayFromData;
+  updateDayDropdownAvailability();
+
 
   render();
 
   // keep "remove" dropdown in sync with selected day
   daySelect?.addEventListener("change", () => {
     refreshRemoveDropdown();
-  });
+  
+    const day = daySelect.value;
+    if (!day) return;
+  
+    const isoDate = formatISO(
+      addDays(state.weekMonday, DAYS.indexOf(day))
+    );
 
+    if (isPastDate(isoDate)) {
+      daySelect.value = "";
+      employeeSelect.value = "";
+      return;
+    }
+  
+    updateEmployeeAvailabilityForDate(isoDate);
+  });
+  
   // ----- Add shift (local only) -----
   addShiftBtn?.addEventListener("click", (e) => {
     e.preventDefault();
@@ -169,19 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ----- Week navigation (UI only for now) -----
-  prevWeekBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
-    state.weekMonday = addDays(state.weekMonday, -7);
-    render();
-  });
-
-  nextWeekBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
-    state.weekMonday = addDays(state.weekMonday, 7);
-    render();
-  });
-
   // ----- Rendering (same DOM/classes as weeklyCalendar.js) -----
   function render() {
     if (!calendarEl) return;
@@ -202,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     DAYS.forEach((dayName, idx) => {
       const col = document.createElement("div");
-      col.className = "day-column";
+      col.className = "day-column";      
 
       const header = document.createElement("div");
       header.className = "day-header";
@@ -242,6 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // update remove dropdown after every render
     refreshRemoveDropdown();
+    updateDayDropdownAvailability();
+
   }
 
   function removeShift(shift) {

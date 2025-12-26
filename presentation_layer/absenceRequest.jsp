@@ -37,7 +37,7 @@
         <% }  %>
         
 
-
+        <p id="timeError" class="error-message" style="display:none;"></p>
         <form action = "absenceFormChecker.jsp" id="absenceForm" method="post">
             
             <div class="input-group">
