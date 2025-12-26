@@ -367,4 +367,33 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
+     //method for all absence request retrieval 
+    public List<AbsenceRequest> retrieveAllManagerAbsenceRequests(int managerId) {
+        List<AbsenceRequest> requests = new ArrayList<>();
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT a.request_id,employee_id,manager_id,date_created,status,start_date,end_date,absence_type FROM Request as r, AbsenceRequest as a, Manager as m WHERE r.manager_id = m.id AND r.request_id = a.request_id AND manager_id = ? ORDER BY r.date_created DESC";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,managerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int requestId = rs.getInt("request_id");
+                int employeeId = rs.getInt("employee_id");
+                LocalDate date = rs.getDate("date_created").toLocalDate();
+                String stringStatus = rs.getString("status");
+                Request.Status status = Request.Status.valueOf(stringStatus.toUpperCase());
+                LocalDate startDate = rs.getDate("start_date").toLocalDate();
+                LocalDate endDate = rs.getDate("end_date").toLocalDate();
+                String type = rs.getString("absence_type");
+                AbsenceRequest.AbsenceType absenceType = AbsenceRequest.AbsenceType.valueOf(type.toUpperCase());
+                requests.add(new AbsenceRequest(requestId,employeeId,managerId,date,status,startDate,endDate,absenceType));   
+            }
+            return requests;   
+        } catch (Exception e) {
+            e.getMessage();
+            return requests;
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
