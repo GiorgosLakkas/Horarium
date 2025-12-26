@@ -221,3 +221,9 @@
 .week-calendar {
   flex: 1;
 }
+
+.shift-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
