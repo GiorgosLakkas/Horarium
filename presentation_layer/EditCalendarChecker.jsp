@@ -5,119 +5,78 @@
 <%@ page import="com.google.gson.Gson" %>
 <%@ page import="com.google.gson.reflect.TypeToken" %>
 
-<%!
-    public static class ShiftPayload {
-        public String shiftId;
-        public String employeeId;
-        public String start;
-        public String end;
-        public String date;
-    }
-%>
 
 <%
-    request.setCharacterEncoding("UTF-8");
-
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        response.setStatus(401);
-        out.print("Not logged in");
-        return;
-    }
+  User user = (User)session.getAttribute("user");
+  if (user == null) { %> 
+    <jsp:forward page = "forcedLogin.jsp"/>
+<% }
 
     int managerId = user.getId();
-
     String calendarIdStr = request.getParameter("calendarId");
     String shiftsDataJson = request.getParameter("shiftsData");
     String deletedIdsJson = request.getParameter("deletedIds");
 
-    int calendarId;
-    try {
-        calendarId = Integer.parseInt(calendarIdStr);
-    } catch (Exception e) {
-        response.setStatus(400);
-        out.print("Missing/invalid calendarId");
-        return;
-    }
-
-    if (calendarId <= 0) {
-        response.setStatus(400);
-        out.print("No active calendar to edit");
-        return;
-    }
-
+    int calendarId = Integer.parseInt(calendarIdStr);
     ShiftDAO sdao = new ShiftDAO();
     Gson gson = new Gson();
-
     try {
         // ---------- DELETE ----------
         if (deletedIdsJson != null && !deletedIdsJson.trim().isEmpty() && !deletedIdsJson.trim().equals("[]")) {
-            java.lang.reflect.Type listType = new TypeToken<List<String>>(){}.getType();
-            List<String> deletedIds = gson.fromJson(deletedIdsJson, listType);
+            List<String> deletedIds = gson.fromJson(
+                deletedIdsJson,
+                new TypeToken<List<String>>() {}.getType()
+            );
 
             if (deletedIds != null) {
+                // Collect valid IDs into a List of Integers
+                List<Integer> idsToDelete = new ArrayList<>();
                 Set<String> uniq = new LinkedHashSet<>(deletedIds);
+
                 for (String idStr : uniq) {
                     if (idStr == null) continue;
                     idStr = idStr.trim();
                     if (idStr.isEmpty()) continue;
-
-                    int shiftId;
                     try {
-                        shiftId = Integer.parseInt(idStr);
-                    } catch (Exception ignore) {
-                        continue;
+                        idsToDelete.add(Integer.parseInt(idStr));
+                    } catch (NumberFormatException e) {
+                        // ignore malformed ID
                     }
-
-                    Shift sh = new Shift();
-                    sh.setShiftId(shiftId);
-                    sdao.removeShift(sh);
+                }
+                List<Shift> shiftsToBeRemoved = new ArrayList<>();
+                for (int id : idsToDelete) {
+                    //out.println(id);
+                    shiftsToBeRemoved.add(sdao.fetchShiftById(id));
+                }
+                // Call the new Batch Delete method ONCE
+                if (!shiftsToBeRemoved.isEmpty()) {
+                    sdao.removeShiftsInEdit(shiftsToBeRemoved);
                 }
             }
         }
-
-        // ---------- INSERT/UPDATE ----------
+        // ----------------------------------------------------
+        // INSERT/UPDATE 
+        // ----------------------------------------------------
         if (shiftsDataJson != null && !shiftsDataJson.trim().isEmpty() && !shiftsDataJson.trim().equals("[]")) {
-            java.lang.reflect.Type listType = new TypeToken<List<ShiftPayload>>(){}.getType();
-            List<ShiftPayload> shifts = gson.fromJson(shiftsDataJson, listType);
-
-            if (shifts != null) {
-                for (ShiftPayload p : shifts) {
-                    if (p == null) continue;
-                    if (p.employeeId == null || p.start == null || p.end == null || p.date == null) continue;
-
-                    int employeeId;
-                    LocalTime start;
-                    LocalTime end;
-                    LocalDate date;
-
-                    try {
-                        employeeId = Integer.parseInt(p.employeeId.trim());
-                        start = LocalTime.parse(p.start.trim());
-                        end = LocalTime.parse(p.end.trim());
-                        date = LocalDate.parse(p.date.trim());
-                    } catch (Exception ignore) {
-                        continue;
-                    }
-
-                    if (p.shiftId == null || p.shiftId.trim().isEmpty()) {
-                        Shift newShift = new Shift(employeeId, managerId, calendarId, start, end, date);
-                        try { sdao.insertShift(newShift); } catch (Exception ignore) {}
+            List<ShiftEditDTO> dtos = gson.fromJson(
+                shiftsDataJson,
+                new TypeToken<List<ShiftEditDTO>>() {}.getType()
+            );
+            if (dtos != null) {
+                for (ShiftEditDTO dto : dtos) {
+                    if (dto == null) continue;
+                    //out.println(dto);
+                    if (dto.isNew()) {
+                        sdao.insertShift(dto.toShiftForInsert(managerId, calendarId));
                     } else {
-                        int shiftId;
-                        try { shiftId = Integer.parseInt(p.shiftId.trim()); }
-                        catch (Exception ignore) { continue; }
-
-                        Shift updated = new Shift(shiftId, employeeId, managerId, calendarId, start, end, date);
-                        sdao.updateShift(updated);
+                        continue;
                     }
                 }
             }
         }
-
-        out.print("OK");
+        //this is for js to understand that everything went well and redirection to dashboard should be performed
+        out.println("ok");
     } catch (Exception e) {
-        response.setStatus(500);
-        out.print("Server error: " + e.getMessage());
+        out.print(e.getMessage());
     }
 %>
