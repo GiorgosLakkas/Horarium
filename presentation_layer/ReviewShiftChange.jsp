@@ -53,7 +53,7 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/member1.png" alt="Profile" class="profile-icon">
-          <h1>Review Shift Change Requests <%=user.getUsername()%></h1>
+          <h1><%=user.getUsername()%>, Your Unreviewed Shift Change Requests</h1>
         </div>
       </header>
       <% RequestDAO rd = new RequestDAO();

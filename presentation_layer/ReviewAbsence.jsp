@@ -54,7 +54,7 @@
       <header class="header">
         <div class="profile-section">
           <img src="images/member1.png" alt="Profile" class="profile-icon">
-          <h1>Review Absence Requests <%=user.getUsername()%></h1>
+          <h1><%=user.getUsername()%>, Your Unreviewed Absence Requests</h1>
         </div>
       </header>
 
