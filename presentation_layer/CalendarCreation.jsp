@@ -26,7 +26,11 @@
 </head>
 
 <body>
-  <img src="images/logo.png" alt="Company Logo" class="logo">
+<div style="margin-bottom: 30px;">
+    <a href="managerDashboard.jsp">
+      <img src="images/logo.png" alt="Company Logo" style="width: 85px; height: auto;">
+    </a>
+  </div>
 
 
 

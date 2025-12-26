@@ -96,8 +96,10 @@
 
 <body style="display:block; padding:40px; background-color:var(--bg); color:var(--text);">
 
-  <div style="margin-bottom: 30px;">
-    <img src="images/logo.png" alt="Company Logo" style="width: 85px; height: auto;">
+<div style="margin-bottom: 30px;">
+    <a href="managerDashboard.jsp">
+      <img src="images/logo.png" alt="Company Logo" style="width: 85px; height: auto;">
+    </a>
   </div>
 
   <div style="display:flex; gap:40px; align-items:flex-start;">
