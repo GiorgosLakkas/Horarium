@@ -15,6 +15,7 @@ if ("reject".equals(updatedStatus)) {
     AbsenceRequest absenceRequest = rd.fetchAbsenceDataByRequestId(absenceRequestId);
     try {
         rd.insertDaysOff(absenceRequestId,absenceRequest.getStartDate(),absenceRequest.getEndDate());
+        rd.updateDaysOffRemainingByRequestId(absenceRequest.getStartDate(),absenceRequest.getEndDate());
     } catch (Exception e) {
         out.println(e.getMessage());
         return;

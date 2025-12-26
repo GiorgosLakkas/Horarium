@@ -341,4 +341,30 @@ public class RequestDAO {
             DBConnection.closeConnection(con);
         }
     }
+    //method for updating days_off_remaining of an employee based on an accepted absence request (put here due to request,days_off tables being utilized)
+    public void updateDaysOffRemainingByRequestId(LocalDate starDate, LocalDate endDate) throws Exception {
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT days_off,employee_id FROM Request AS r,Days_Off AS d WHERE d.request_id = r.request_id and days_off = ?"; 
+        String query = "UPDATE Employee SET days_off_remaining = days_off_remaining - ? WHERE id = ?";
+        try {
+            PreparedStatement ps1 = con.prepareStatement(sql);
+            ps1.setInt(1,AbsenceRequest.countWeekdays(starDate, endDate));
+            ResultSet rs = ps1.executeQuery();
+            if (rs.next()) {
+                int daysOff = rs.getInt("days_off");
+                int employeeId = rs.getInt("r.employee_id");
+                PreparedStatement ps2 = con.prepareStatement(query);
+                ps2.setInt(1,daysOff);
+                ps2.setInt(2,employeeId);
+                int row = ps2.executeUpdate();
+                if (row == 0) {
+                    throw new Exception("No days_off_remaining were updated");
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
