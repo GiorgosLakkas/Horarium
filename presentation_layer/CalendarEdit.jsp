@@ -101,6 +101,12 @@
       <img src="images/logo.png" alt="Company Logo" style="width: 85px; height: auto;">
     </a>
   </div>
+  <%
+  Shift flag = (Shift)session.getAttribute("flag");
+  if (flag != null) {
+    out.println("Replace employee : " + udao.getEmployeeNameDetailsById(flag.getEmployeeId()) + " from : " + flag.getDate());
+  } 
+  %>
 
   <div style="display:flex; gap:40px; align-items:flex-start;">
 
