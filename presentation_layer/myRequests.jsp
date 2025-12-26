@@ -30,7 +30,11 @@
     <div class="dashboard-container">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <img src="images/logo.png" alt="Horarium Logo" class="sidebar-logo">
+        <div style="margin-bottom: 30px;">
+          <a href="employeeDashboard.jsp">
+            <img src="images/logo.png" alt="Company Logo" style="width: 150px; height: auto;">
+          </a>
+        </div>
         
       
         <!-- Live Clock -->

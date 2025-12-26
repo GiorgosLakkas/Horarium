@@ -40,8 +40,10 @@
     </div>
 
     <div class="login-right">
-      <div class="illustration">
-        <img src="images/calendar-illustration.png" alt="Calendar Illustration" />
+       <div class="illustration">
+        <a href = "employeeDashboard.jsp">
+          <img src="images/calendar-illustration.png" alt="Calendar Illustration" />
+        </a>
       </div>
     </div>
   </div>

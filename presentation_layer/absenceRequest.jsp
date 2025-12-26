@@ -81,8 +81,10 @@
 
     <div class="login-right">
         <div class="illustration">
-            <img src="images/calendar-illustration.png" alt="Calendar Illustration" />
-        </div>
+            <a href = "employeeDashboard.jsp">
+                <img src="images/calendar-illustration.png" alt="Calendar Illustration" />
+            </a>
+      </div>
     </div>
 
 </div>
