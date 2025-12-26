@@ -212,4 +212,29 @@ public class ShiftDAO {
             DBConnection.closeConnection(con);
         }
     }
+        //method for fetching all weekly shifts of an employee, based on the current job_calendar and employee_id
+    public List<Shift> fetchAllWeeklyShiftsByEmployeeId(JobCalendar jobCalendar, int employeeId) throws Exception {
+        List<Shift> shifts = new ArrayList<>();
+        Connection con = DBConnection.openConnection();
+        String sql = "SELECT * FROM Shift AS s, Job_Calendar AS j WHERE J.calendar_id = s.job_calendar_id AND s.employee_id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1,employeeId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                shifts.add(new Shift(rs.getInt("shift_id"),
+                employeeId,
+                rs.getInt("manager_id"),
+                rs.getInt("job_calendar_id"),
+                rs.getTime("start_time").toLocalTime(),
+                rs.getTime("end_time").toLocalTime(),
+                rs.getDate("date").toLocalDate()));
+            }
+            return shifts;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            DBConnection.closeConnection(con);
+        }
+    }
 }
