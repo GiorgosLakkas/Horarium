@@ -105,7 +105,7 @@
 <%
   Shift flag = (Shift)session.getAttribute("flag");
   if (flag != null) {
-    out.println("Replace employee : " + udao.getEmployeeNameDetailsById(flag.getEmployeeId()) + " from : " + flag.getDate());
+    out.println("Replace removed employee : " + udao.getEmployeeNameDetailsById(flag.getEmployeeId()) + " from " + flag.getDate().getDayOfWeek() + ", " + flag.getDate());
   } 
 %>
 
