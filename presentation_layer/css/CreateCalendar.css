@@ -263,7 +263,23 @@ select,
   width: 100%;
 }
 
-/* Main input styling */
+#daySelect {
+  background-color: #1e1e2f;   /* dropdown background */
+  color: #ffffff;             /* text color */
+  border: 2px solid #4a90e2;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* when focused */
+#daySelect:focus {
+  outline: none;
+  border-color: #1e1e2f;
+  box-shadow: 0 0 5px #1e1e2f;
+}
+
 #timeInput2 {
   width: 100%;
   padding: 8px 10px;
