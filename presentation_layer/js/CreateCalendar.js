@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calendar elements
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
-    const prevBtn = document.getElementById("prevMonth");
-    const nextBtn = document.getElementById("nextMonth");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
     // -----------------------------
 // Accepted absences (from JSP)
 // -----------------------------

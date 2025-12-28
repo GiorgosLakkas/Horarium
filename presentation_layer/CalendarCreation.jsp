@@ -43,8 +43,8 @@
             <div class="month-title" id="monthTitle">Month Year</div>
 
             <div class="nav">
-              <button id="prevMonth" class="nav-btn">‹</button>
-              <button id="nextMonth" class="nav-btn">›</button>
+              <button id="prevBtn" class="nav-btn">‹</button>
+              <button id="nextBtn" class="nav-btn">›</button>
             </div>
           </div>
 
@@ -215,6 +215,8 @@ String absencesJson = new Gson().toJson(absenceDTOs);
   <script src="js/CreateCalendar.js" defer></script>
   <script>
     let shiftList = [];
+    let counter = 0;
+
 
     function updateHiddenShifts() {
       document.getElementById("shiftsData").value = JSON.stringify(shiftList);
@@ -272,19 +274,20 @@ String absencesJson = new Gson().toJson(absenceDTOs);
         updateHiddenShifts();
     });
 
+
     document.getElementById("clearShiftsBtn").addEventListener("click", () => {
       shiftList = [];
       updateHiddenShifts();
     });
-    document.getElementById("prevMonth").addEventListener("click", () => {
-
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      counter = counter - 1;
       shiftList = [];
       updateHiddenShifts();
    
     
     });
-    document.getElementById("nextMonth").addEventListener("click", () => {
-
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      counter = counter + 1;
       shiftList = [];
       updateHiddenShifts();
 
@@ -301,8 +304,8 @@ String absencesJson = new Gson().toJson(absenceDTOs);
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(endOfWeek.getDate() + 6);
 
-      startOfWeek.setDate(startOfWeek.getDate() + 1);
-      endOfWeek.setDate(endOfWeek.getDate() + 1);
+      startOfWeek.setDate(startOfWeek.getDate() + 1 + counter*7);
+      endOfWeek.setDate(endOfWeek.getDate() + 1 + counter*7);
   
       document.getElementById("startDate").value = startOfWeek.toISOString().split('T')[0];
       document.getElementById("endDate").value = endOfWeek.toISOString().split('T')[0];
