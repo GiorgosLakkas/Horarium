@@ -235,6 +235,20 @@ String absencesJson = new Gson().toJson(absenceDTOs);
 
     let currentWeekStart = getWeekStart(currentDate); 
     const weekdayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      counter = counter - 1;
+      shiftList = [];
+      updateHiddenShifts();
+   
+    
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      counter = counter + 1;
+      shiftList = [];
+      updateHiddenShifts();
+
+    });
   
     document.getElementById("addShiftBtn").addEventListener("click", () => {
     
@@ -248,7 +262,7 @@ String absencesJson = new Gson().toJson(absenceDTOs);
         const dayIndex = weekdayNames.indexOf(selectedDay);
 
         const shiftDate = new Date(currentWeekStart);
-        shiftDate.setDate(currentWeekStart.getDate() + dayIndex );
+        shiftDate.setDate(currentWeekStart.getDate() + dayIndex + counter*7);
     
         // Add a separate shift for each employee and append to the list
         selectedEmployees.forEach(employee => {
@@ -278,19 +292,6 @@ String absencesJson = new Gson().toJson(absenceDTOs);
     document.getElementById("clearShiftsBtn").addEventListener("click", () => {
       shiftList = [];
       updateHiddenShifts();
-    });
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      counter = counter - 1;
-      shiftList = [];
-      updateHiddenShifts();
-   
-    
-    });
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      counter = counter + 1;
-      shiftList = [];
-      updateHiddenShifts();
-
     });
 
     document.getElementById("submitCalendar").addEventListener("click", () => {
