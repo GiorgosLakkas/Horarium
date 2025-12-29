@@ -72,33 +72,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function updateDayDropdownAvailability() {
-    if (!daySelect) return;
-  
-    const todayISO = formatISO(new Date());
-  
-    Array.from(daySelect.options).forEach(opt => {
-      if (!opt.value) return; // "-- Select Day --"
-  
-      const isoDate = getIsoDateForDay(opt.value);
-      if (!isoDate) return;
-  
-      const isPast = isoDate < todayISO;
-  
-      opt.disabled = isPast;
-  
-      // clean label
-    });
-  
-    // reset selection if user had picked a past day
-    if (daySelect.value) {
-      const iso = getIsoDateForDay(daySelect.value);
-      if (iso && iso < todayISO) {
-        daySelect.value = "";
-      }
+  function getTodayIndex() {
+  const d = new Date();
+  const day = d.getDay(); // Sun=0, Mon=1, ...
+  return (day + 6) % 7;   // Mon=0 ... Sun=6
+}
+
+
+function updateDayDropdownAvailability() {
+  if (!daySelect) return;
+
+  const todayIdx = getTodayIndex();
+
+  Array.from(daySelect.options).forEach(opt => {
+    if (!opt.value) return;
+
+    const dayIdx = DAYS.indexOf(opt.value);
+    if (dayIdx === -1) return;
+
+    // disable only days BEFORE today
+    opt.disabled = dayIdx < todayIdx;
+  });
+
+  // reset selection if user picked a past day
+  if (daySelect.value) {
+    const selIdx = DAYS.indexOf(daySelect.value);
+    if (selIdx !== -1 && selIdx < todayIdx) {
+      daySelect.value = "";
     }
   }
-  
+}
 
   // ----- State (what we see on screen & what we will submit) -----
   let state = {
@@ -139,32 +142,27 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // if we have any dates from the server, align weekMonday to that calendar week
-  const mondayFromData = guessWeekMondayFromData(state.shifts);
-  if (mondayFromData) state.weekMonday = mondayFromData;
+  // const mondayFromData = guessWeekMondayFromData(state.shifts);
+  // if (mondayFromData) state.weekMonday = mondayFromData;
   updateDayDropdownAvailability();
 
 
   render();
 
   // keep "remove" dropdown in sync with selected day
-  daySelect?.addEventListener("change", () => {
-    refreshRemoveDropdown();
-  
-    const day = daySelect.value;
-    if (!day) return;
-  
-    const isoDate = formatISO(
-      addDays(state.weekMonday, DAYS.indexOf(day))
-    );
+daySelect?.addEventListener("change", () => {
+  refreshRemoveDropdown();
 
-    if (isPastDate(isoDate)) {
-      daySelect.value = "";
-      employeeSelect.value = "";
-      return;
-    }
-  
-    updateEmployeeAvailabilityForDate(isoDate);
-  });
+  const day = daySelect.value;
+  if (!day) return;
+
+  const isoDate = formatISO(
+    addDays(state.weekMonday, DAYS.indexOf(day))
+  );
+
+  updateEmployeeAvailabilityForDate(isoDate);
+});
+
   
   // ----- Add shift (local only) -----
   addShiftBtn?.addEventListener("click", (e) => {
