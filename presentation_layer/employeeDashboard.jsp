@@ -75,11 +75,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Horarium | Manager Dashboard</title>
-  <link rel="stylesheet" href="css/base.css">
+
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/manager.css">
 <link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/calendarNikou.css">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="icon" type="image/png" href="images/tabicon.png" />
 </head>
@@ -120,9 +121,14 @@
           <img src="images/member1.png" alt="Profile" class="profile-icon">
           <h1>Welcome, <%=user.getUsername()%> </h1>
         </div>
-        <button class="request-btn" onclick="window.location.href='request.jsp'">
-          <i class="fa-solid fa-paper-plane"></i> Make Request
-        </button>        
+<button class="request-btn"
+        onclick="window.location.href='request.jsp'"
+        style="width:auto; background: linear-gradient(90deg, #00bcd4, #0077ff); border:none; color:#fff; box-shadow: 0 4px 12px rgba(0, 188, 212, 0.35);">
+  <i class="fa-solid fa-paper-plane"></i> Make Request
+</button>
+
+
+     
       </header>
       
 

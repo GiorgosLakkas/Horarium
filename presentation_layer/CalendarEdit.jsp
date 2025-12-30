@@ -148,11 +148,19 @@
           <div style="display:flex; gap:10px;">
             <div style="flex:1;">
               <label style="display:block; margin-bottom:6px; font-weight:600;">Start</label>
-              <input id="startTime" type="time" placeholder="HH:MM" ="width:100%; padding:12px; background:#0f1724; color:white; border:1px solid #334155; border-radius:10px;">
+<input
+  id="startTime"
+  type="time"
+  style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+>
             </div>
             <div style="flex:1;">
               <label style="display:block; margin-bottom:6px; font-weight:600;">End</label>
-              <input id="endTime" type="time" placeholder="HH:MM" ="width:100%; padding:12px; background:#0f1724; color:white; border:1px solid #334155; border-radius:10px;">
+<input
+  id="endTime"
+  type="time"
+  style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+>
             </div>
           </div>
 <%
@@ -193,9 +201,13 @@ String absencesJson = new Gson().toJson(absenceDTOs);
           <hr class="panel-sep" />
 
               <label>Remove shift (from selected day)</label>
-              <select id="removeShiftSelect">
-                <option value="">-- Select Shift --</option>
-              </select>
+<select
+  id="removeShiftSelect"
+  style="width:100%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+>
+  <option value="">-- Select Shift --</option>
+</select>
+
               <button class="btn btn-danger" id="removeShiftBtn" type="button">Remove Shift</button>
 
         </div>

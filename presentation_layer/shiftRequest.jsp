@@ -41,10 +41,10 @@
                 for (Shift s: shifts) {
               %>
                 <label class="shift-item">
-                  <input type="radio" name="shiftId" value="<%=s.getShiftId()%>" />
-                  <span>
-                    <%= s.getDate() + " " 
-                        + s.getStartTime() + "=>"
+                  <input type="radio" name="shiftId" value="<%=s.getShiftId()%>"  />
+                  <span style="width:100%; text-align:center;">
+                    <%= s.getDate() + "  |" 
+                        + s.getStartTime() + "-"
                         + s.getEndTime() %>
                   </span>
                 </label>
