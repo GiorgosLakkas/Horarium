@@ -216,10 +216,11 @@ public class ShiftDAO {
     public List<Shift> fetchAllWeeklyShiftsByEmployeeId(JobCalendar jobCalendar, int employeeId) throws Exception {
         List<Shift> shifts = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Shift AS s, Job_Calendar AS j WHERE J.calendar_id = s.job_calendar_id AND s.employee_id = ?";
+        String sql = "SELECT * FROM Shift AS s, Job_Calendar AS j WHERE J.calendar_id = s.job_calendar_id AND calendar_id = ? AND s.employee_id = ?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1,employeeId);
+            ps.setInt(1,jobCalendar.getCalendarId());
+            ps.setInt(2,employeeId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 shifts.add(new Shift(rs.getInt("shift_id"),
