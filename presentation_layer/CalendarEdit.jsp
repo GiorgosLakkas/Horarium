@@ -145,24 +145,54 @@
             </select>
           </div>
 
-          <div style="display:flex; gap:10px;">
-            <div style="flex:1;">
-              <label style="display:block; margin-bottom:6px; font-weight:600;">Start</label>
-<input
-  id="startTime"
-  type="time"
-  style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
->
-            </div>
-            <div style="flex:1;">
-              <label style="display:block; margin-bottom:6px; font-weight:600;">End</label>
-<input
-  id="endTime"
-  type="time"
-  style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
->
+          <div class="time-container">
+            <div style="display:flex; align-items:center; gap:50px;">
+              <input type="text" name="startTime" id="startTime"
+                     style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+                     placeholder="Select start time" readonly>
+          
+              <button type="button" id="clearTime">Clear</button>
+          </div>
+        
+            <div id="timePopup" class="popup hidden">
+              <label>Hour:</label>
+              <select id="hourSelect">
+                <option value="">--</option>
+              </select>
+        
+              <label>Minute:</label>
+              <select id="minuteSelect">
+                <option value="">--</option>
+              </select>
+        
+              <button type="button" id="applyTime">Apply</button>
             </div>
           </div>
+        
+          <div class="time-container">
+            <div style="display:flex; align-items:center; gap:50px;">
+              <input type="text" name="endTime" id="endTime"
+                     style="width:50%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+                     placeholder="Select end time" readonly>
+          
+              <button type="button" id="clearTime2">Clear</button>
+          </div>
+          
+            <div id="timePopup2" class="popup hidden">
+              <label>Hour:</label>
+              <select id="hourSelect2">
+                <option value="">--</option>
+              </select>
+        
+              <label>Minute:</label>
+              <select id="minuteSelect2">
+                <option value="">--</option>
+              </select>
+        
+              <button type="button" id="applyTime2">Apply</button>
+            </div>
+          </div>
+
 <%
 UserDAO ud = new UserDAO();
 RequestDAO rd = new RequestDAO();

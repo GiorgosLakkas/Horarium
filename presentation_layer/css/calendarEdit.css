@@ -1,6 +1,7 @@
 /* Only the right-side edit panel layout + remove button styling.
    Everything else comes from the dashboard + calendarNikou.css */
 
+
    .edit-layout{
     display:flex;
     gap: 34px;
@@ -51,6 +52,180 @@
     border: 1px solid #334155;
     border-radius: 10px;
   }
+
+
+  .time-container {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+  }
+  
+  #daySelect {
+    background-color: #1e1e2f;   /* dropdown background */
+    color: #ffffff;             /* text color */
+    border: 2px solid #4a90e2;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* when focused */
+  #daySelect:focus {
+    outline: none;
+    border-color: #1e1e2f;
+    box-shadow: 0 0 5px #1e1e2f;
+  }
+  
+  #timeInput {
+    width: 100%;
+    padding: 8px 10px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+  }
+  
+  #timeInput:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Popup box */
+  .popup {
+    position: absolute;
+    top: 50px; /* under input */
+    left: 0;
+    background: var(--card);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    width: 160px;
+    z-index: 20;
+    color: var(--text);
+    font-size: 14px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .popup select {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 5px;
+    background: #1f2227;
+    color: var(--text);
+    border-radius: 5px;
+    border: 1px solid #444;
+  }
+  
+  #applyTime {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  #clearTime {
+    margin-top: 5px;
+    padding: 10px 12px;
+    background: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  #clearTime:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+  
+  
+  /* Main input styling */
+  #timeInput2 {
+    width: 100%;
+    padding: 8px 10px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+  }
+  
+  #timeInput2:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Popup box */
+  .popup2 {
+    position: absolute;
+    top: 50px; /* under input */
+    left: 0;
+    background: var(--card);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    width: 160px;
+    z-index: 20;
+    color: var(--text);
+    font-size: 14px;
+  }
+  
+  .hidden2 {
+    display: none;
+  }
+  
+  .popup2 select {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 5px;
+    background: #1f2227;
+    color: var(--text);
+    border-radius: 5px;
+    border: 1px solid #444;
+  }
+  
+  #applyTime2 {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  #clearTime2 {
+    margin-top: 5px;
+    padding: 10px 12px;
+    background: #d9534f;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  #clearTime2:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+  
+
   
   .two-col{ display:flex; gap: 12px; }
   .two-col > div{ flex:1; }

@@ -15,7 +15,9 @@
   <title>Shift Change Request | Horarium</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/calendarEdit.css"> 
   <link rel="stylesheet" href="css/responsive.css">
+
   <link rel="icon" type="image/png" href="images/tabicon.png" />
 </head>
 <body class="login-page">
@@ -52,7 +54,6 @@
                 }
               %>
             </div>
-        
           </details>
         </div>
         
@@ -62,15 +63,51 @@
           <label for="newDay">New Day (Available):</label>
           <input type="date" id="newDay" name="newDay" required />
         </div>
-
-        <div class="input-group">
-          <label for="startTime">Start Time:</label>
-          <input type="time" id="startTime" name="startTime" required />
+<!-- custom time selectors -->
+        <div class="time-container">
+          <div style="display:flex; align-items:center; gap:50px;">
+            <input type="text" name ="startTime" id="startTime"
+                   style="width:100%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+                   placeholder="Select start time" readonly>
+        
+          </div>
+      
+          <div id="timePopup" class="popup hidden">
+            <label>Hour:</label>
+            <select id="hourSelect">
+              <option value="">--</option>
+            </select>
+      
+            <label>Minute:</label>
+            <select id="minuteSelect">
+              <option value="">--</option>
+            </select>
+      
+            <button type="button" id="applyTime">Apply</button>
+          </div>
         </div>
 
-        <div class="input-group">
-          <label for="endTime">End Time:</label>
-          <input type="time" id="endTime" name="endTime" required />
+        <div class="time-container">
+            <div style="display:flex; align-items:center; gap:50px;">
+              <input type="text" name="endTime" id="endTime"
+                     style="width:100%; padding:12px; background:#0f1724; color:var(--text); border:1px solid #334155; border-radius:10px;"
+                     placeholder="Select end time" readonly>
+        
+            </div>
+          
+            <div id="timePopup2" class="popup hidden">
+              <label>Hour:</label>
+              <select id="hourSelect2">
+                <option value="">--</option>
+              </select>
+        
+              <label>Minute:</label>
+              <select id="minuteSelect2">
+                <option value="">--</option>
+              </select>
+        
+              <button type="button" id="applyTime2">Apply</button>
+            </div>
         </div>
 
         <!-- this shows the controller that this is a shiftChangeRequest -->
@@ -87,7 +124,7 @@
 
     <div class="login-right">
        <div class="illustration">
-        <a href = "employeeDashboard.jsp">
+        <a>
           <img src="images/calendar-illustration.png" alt="Calendar Illustration" />
         </a>
       </div>

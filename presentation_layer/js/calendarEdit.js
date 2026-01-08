@@ -72,36 +72,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function getTodayIndex() {
-  const d = new Date();
-  const day = d.getDay(); // Sun=0, Mon=1, ...
-  return (day + 6) % 7;   // Mon=0 ... Sun=6
-}
-
-
-function updateDayDropdownAvailability() {
-  if (!daySelect) return;
-
-  const todayIdx = getTodayIndex();
-
-  Array.from(daySelect.options).forEach(opt => {
-    if (!opt.value) return;
-
-    const dayIdx = DAYS.indexOf(opt.value);
-    if (dayIdx === -1) return;
-
-    // disable only days BEFORE today
-    opt.disabled = dayIdx < todayIdx;
-  });
-
-  // reset selection if user picked a past day
-  if (daySelect.value) {
-    const selIdx = DAYS.indexOf(daySelect.value);
-    if (selIdx !== -1 && selIdx < todayIdx) {
-      daySelect.value = "";
+  function updateDayDropdownAvailability() {
+    if (!daySelect) return;
+  
+    const todayISO = formatISO(new Date());
+  
+    Array.from(daySelect.options).forEach(opt => {
+      if (!opt.value) return; // "-- Select Day --"
+  
+      const isoDate = getIsoDateForDay(opt.value);
+      if (!isoDate) return;
+  
+      const isPast = isoDate < todayISO;
+  
+      opt.disabled = isPast;
+  
+      // clean label
+    });
+  
+    // reset selection if user had picked a past day
+    if (daySelect.value) {
+      const iso = getIsoDateForDay(daySelect.value);
+      if (iso && iso < todayISO) {
+        daySelect.value = "";
+      }
     }
   }
-}
+  
 
   // ----- State (what we see on screen & what we will submit) -----
   let state = {
@@ -142,27 +139,32 @@ function updateDayDropdownAvailability() {
   });
 
   // if we have any dates from the server, align weekMonday to that calendar week
-  // const mondayFromData = guessWeekMondayFromData(state.shifts);
-  // if (mondayFromData) state.weekMonday = mondayFromData;
+  const mondayFromData = guessWeekMondayFromData(state.shifts);
+  if (mondayFromData) state.weekMonday = mondayFromData;
   updateDayDropdownAvailability();
 
 
   render();
 
   // keep "remove" dropdown in sync with selected day
-daySelect?.addEventListener("change", () => {
-  refreshRemoveDropdown();
+  daySelect?.addEventListener("change", () => {
+    refreshRemoveDropdown();
+  
+    const day = daySelect.value;
+    if (!day) return;
+  
+    const isoDate = formatISO(
+      addDays(state.weekMonday, DAYS.indexOf(day))
+    );
 
-  const day = daySelect.value;
-  if (!day) return;
-
-  const isoDate = formatISO(
-    addDays(state.weekMonday, DAYS.indexOf(day))
-  );
-
-  updateEmployeeAvailabilityForDate(isoDate);
-});
-
+    if (isPastDate(isoDate)) {
+      daySelect.value = "";
+      employeeSelect.value = "";
+      return;
+    }
+  
+    updateEmployeeAvailabilityForDate(isoDate);
+  });
   
   // ----- Add shift (local only) -----
   addShiftBtn?.addEventListener("click", (e) => {
@@ -195,6 +197,128 @@ daySelect?.addEventListener("change", () => {
     flashStatus("Shift added ", false);
     render();
   });
+
+  //up until 320 is for the new time buttons
+  const timeInput = document.getElementById("startTime");
+  const timePopup = document.getElementById("timePopup");
+  const hourSelect = document.getElementById("hourSelect");
+  const minuteSelect = document.getElementById("minuteSelect");
+  const applyBtn = document.getElementById("applyTime");
+  const clearBtn = document.getElementById("clearTime");
+
+  // Generate hours
+  for (let h = 0; h < 24; h++) {
+      hourSelect.innerHTML += `<option value="${String(h).padStart(2, '0')}">${String(h).padStart(2, '0')}</option>`;
+  }
+
+  // Generate minutes (00, 05, 10, ...)
+  for (let m = 0; m < 60; m += 5) {
+      minuteSelect.innerHTML += `<option value="${String(m).padStart(2, '0')}">${String(m).padStart(2, '0')}</option>`;
+  }
+
+  // Show popup
+  timeInput.onclick = () => {
+      timePopup.classList.toggle("hidden");
+  };
+
+  // Apply time
+  applyBtn.onclick = () => {
+      const hour = hourSelect.value;
+      const minute = minuteSelect.value;
+
+      if (hour && minute) {
+          timeInput.value = `${hour}:${minute}`;
+      }
+
+      timePopup.classList.add("hidden");
+  };
+
+  // Clear time
+  clearBtn.onclick = () => {
+      timeInput.value = "";
+      hourSelect.value = "";
+      minuteSelect.value = "";
+  };
+
+  // Close popup when clicking outside
+  document.addEventListener("click", (e) => {
+      if (!timePopup.contains(e.target) && e.target !== timeInput) {
+          timePopup.classList.add("hidden");
+      }
+  });
+
+  const timeInput2 = document.getElementById("endTime");
+  const timePopup2 = document.getElementById("timePopup2");
+  const hourSelect2 = document.getElementById("hourSelect2");
+  const minuteSelect2 = document.getElementById("minuteSelect2");
+  const applyBtn2 = document.getElementById("applyTime2");
+  const clearBtn2 = document.getElementById("clearTime2");
+
+  // Generate hours
+  for (let h = 0; h < 24; h++) {
+      hourSelect2.innerHTML += `<option value="${String(h).padStart(2, '0')}">${String(h).padStart(2, '0')}</option>`;
+  }
+
+  // Generate minutes (00, 05, 10, ...)
+  for (let m = 0; m < 60; m += 5) {
+      minuteSelect2.innerHTML += `<option value="${String(m).padStart(2, '0')}">${String(m).padStart(2, '0')}</option>`;
+  }
+
+  // Show popup
+  timeInput2.onclick = () => {
+      timePopup2.classList.toggle("hidden");
+  };
+
+  // Apply time
+  applyBtn2.onclick = () => {
+      const hour = hourSelect2.value;
+      const minute = minuteSelect2.value;
+
+      if (hour && minute) {
+          timeInput2.value = `${hour}:${minute}`;
+      }
+
+      timePopup2.classList.add("hidden");
+  };
+
+  // Clear time
+  clearBtn2.onclick = () => {
+      timeInput2.value = "";
+      hourSelect2.value = "";
+      minuteSelect2.value = "";
+  };
+
+  // Close popup when clicking outside
+  document.addEventListener("click", (e) => {
+      if (!timePopup2.contains(e.target) && e.target !== timeInput2) {
+          timePopup2.classList.add("hidden");
+      }
+  });
+
+  function isStartBeforeEnd() {
+      const startTime = document.getElementById("startTime").value;
+      const endTime = document.getElementById("endTime").value;
+  
+      if (!startTime || !endTime) return true; // allow empty inputs
+  
+      // Convert HH:MM to minutes
+      const [startH, startM] = startTime.split(":").map(Number);
+      const [endH, endM] = endTime.split(":").map(Number);
+  
+      const startMinutes = startH * 60 + startM;
+      const endMinutes = endH * 60 + endM;
+  
+      return startMinutes < endMinutes;
+  }
+  
+  // Example: check when Apply buttons are clicked
+  document.getElementById("applyTime2").addEventListener("click", () => {
+      if (!isStartBeforeEnd()) {
+          alert("Start time must be earlier than End time!");
+          document.getElementById("timeInput2").value = ""; // optional: clear invalid input
+      }
+  });
+
 
   // ----- Remove shift (ONLY from the side panel) -----
   removeShiftBtn?.addEventListener("click", (e) => {
