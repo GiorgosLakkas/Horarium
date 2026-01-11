@@ -149,7 +149,7 @@ public class ShiftDAO {
     public List<Shift> fetchRemainingWeeklyShiftsByEmployeeId(int employeeId) throws Exception {
         List<Shift> shifts = new ArrayList<>();
         Connection con = DBConnection.openConnection();
-        String sql = "SELECT * FROM Shift AS s WHERE employee_id = ? AND date >= CURDATE() AND date <= (SELECT ending_date FROM Job_Calendar AS j WHERE j.calendar_id = s.job_calendar_id) ORDER BY date";
+        String sql = "SELECT * FROM Shift AS s WHERE employee_id = ? AND s.job_calendar_id = (select calendar_id from job_calendar where starting_date <= curdate() and ending_date >= curdate() and s.manager_id = manager_id) and date>= curdate() order by date";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1,employeeId);
