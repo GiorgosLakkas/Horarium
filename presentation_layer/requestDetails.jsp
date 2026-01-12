@@ -82,14 +82,23 @@
             List<Request> requests = new ArrayList<>();
             String s = user.getName() + " " + user.getSurname();
             requests = rd.retriveEmployeeRequests(user.getId());
-
-            int requestId = Integer.parseInt(request.getParameter("rid"));
+            String reqId = request.getParameter("rid");
+            try {
+              int requestId = Integer.parseInt(request.getParameter("rid"));
+            } catch (NumberFormatException e) {
+                response.sendRedirect("myRequests.jsp");
+                return;
+            }
             Request req = null;
             for (Request r : requests) {
               if (requestId == r.getRequestId()) {
                 req = r;
                 break;
               }
+            }
+            if (req == null) {
+              response.sendRedirect("myRequests.jsp");
+              return;
             }
 
             String type = rd.defineRequestType(req.getRequestId());
